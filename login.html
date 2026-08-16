@@ -1,0 +1,613 @@
+<!DOCTYPE html>  
+<html lang="bn">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>কোপা সামসু লটারি - রিয়েলটাইম পোর্টাল</title>  
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700;800;900&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  
+  <style>  
+    * {  
+      box-sizing: border-box;  
+      margin: 0;  
+      padding: 0;  
+      font-family: 'Hind Siliguri', sans-serif;  
+    }  
+    body {  
+      background: #090a0f;  
+      min-height: 100vh;  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      padding: 20px;  
+      overflow-x: hidden;  
+      position: relative;  
+    }  
+    #bgCanvas {  
+      position: absolute;  
+      top: 0;  
+      left: 0;  
+      width: 100%;  
+      height: 100%;  
+      z-index: 1;  
+      pointer-events: none;  
+    }  
+    .app-card {  
+      position: relative;  
+      z-index: 10;  
+      background: rgba(18, 22, 36, 0.75);  
+      backdrop-filter: blur(20px);  
+      -webkit-backdrop-filter: blur(20px);  
+      border: 1px solid rgba(255, 215, 0, 0.25);  
+      border-radius: 24px;  
+      padding: 35px 30px;  
+      width: 100%;  
+      max-width: 440px;  
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.15), 0 20px 50px rgba(0, 0, 0, 0.8);  
+      color: #fff;  
+      overflow: hidden;  
+    }  
+    .app-card::before {  
+      content: '';  
+      position: absolute;  
+      top: -50%;  
+      left: -50%;  
+      width: 200%;  
+      height: 200%;  
+      background: conic-gradient(transparent, rgba(255, 215, 0, 0.3), transparent 30%);  
+      animation: rotate 6s linear infinite;  
+      z-index: -1;  
+    }  
+    .app-card::after {  
+      content: '';  
+      position: absolute;  
+      inset: 2px;  
+      background: rgba(15, 18, 28, 0.92);  
+      border-radius: 22px;  
+      z-index: -1;  
+    }  
+    @keyframes rotate {  
+      100% { transform: rotate(360deg); }  
+    }  
+    .logo-container {  
+      text-align: center;  
+      margin-bottom: 25px;  
+    }  
+    .logo-shape {  
+      position: relative;  
+      display: inline-block;  
+      padding: 16px 28px;  
+      background: linear-gradient(145deg, rgba(20, 30, 20, 0.9), rgba(10, 15, 25, 0.95));  
+      border: 2px solid #ffd700;  
+      border-radius: 50px 10px 50px 10px;  
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 15px rgba(0, 255, 136, 0.2);  
+    }  
+    .lottery-text-logo {  
+      font-size: 26px;  
+      font-weight: 800;  
+      line-height: 1.2;  
+      background: linear-gradient(180deg, #7ef000 0%, #00e676 100%);  
+      -webkit-background-clip: text;  
+      -webkit-text-fill-color: transparent;  
+      text-transform: uppercase;  
+    }  
+    .lottery-text-logo span {  
+      display: block;  
+      font-size: 34px;  
+      font-weight: 900;  
+      background: linear-gradient(180deg, #ffffff 0%, #ffd700 50%, #ff8c00 100%);  
+      -webkit-background-clip: text;  
+      -webkit-text-fill-color: transparent;  
+      margin-top: 2px;  
+    }  
+    .logo-container p {  
+      font-size: 13.5px;  
+      color: #cbd5e1;  
+      margin-top: 12px;  
+    }  
+    .form-box {  
+      display: none;  
+    }  
+    .form-box.active {  
+      display: block;  
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;  
+    }  
+    @keyframes slideUp {  
+      from { opacity: 0; transform: translateY(20px); }  
+      to { opacity: 1; transform: translateY(0); }  
+    }  
+    .input-group {  
+      position: relative;  
+      margin-bottom: 18px;  
+    }  
+    .input-group i.input-icon {  
+      position: absolute;  
+      left: 16px;  
+      top: 50%;  
+      transform: translateY(-50%);  
+      color: #ffd700;  
+      font-size: 16px;  
+    }  
+    .input-group input {  
+      width: 100%;  
+      padding: 14px 45px 14px 46px;  
+      background: rgba(255, 255, 255, 0.05);  
+      border: 1px solid rgba(255, 255, 255, 0.12);  
+      border-radius: 12px;  
+      color: #fff;  
+      font-size: 15px;  
+      outline: none;  
+      transition: all 0.3s;  
+    }  
+    .input-group input:focus {  
+      border-color: #ffd700;  
+      background: rgba(255, 255, 255, 0.08);  
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.25);  
+    }  
+    .toggle-pass {  
+      position: absolute;  
+      right: 16px;  
+      top: 50%;  
+      transform: translateY(-50%);  
+      color: #a0aec0;  
+      cursor: pointer;  
+      font-size: 15px;  
+    }  
+    .toggle-pass:hover {  
+      color: #ffd700;  
+    }  
+    .btn-submit {  
+      width: 100%;  
+      padding: 14px;  
+      background: linear-gradient(135deg, #ffd700, #ff8c00);  
+      border: none;  
+      border-radius: 12px;  
+      color: #000;  
+      font-size: 17px;  
+      font-weight: 800;  
+      cursor: pointer;  
+      transition: all 0.3s;  
+      margin-top: 8px;  
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      gap: 8px;  
+    }  
+    .btn-submit:hover {  
+      transform: translateY(-2px);  
+      box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);  
+    }  
+    .links {  
+      margin-top: 20px;  
+      text-align: center;  
+      font-size: 14px;  
+      color: #a0aec0;  
+    }  
+    .links a {  
+      color: #ffd700;  
+      text-decoration: none;  
+      font-weight: 700;  
+      cursor: pointer;  
+    }  
+    .links a:hover {  
+      color: #fff;  
+    }  
+    .swal2-popup {  
+      background: rgba(18, 22, 36, 0.95) !important;  
+      border: 1px solid rgba(255, 215, 0, 0.3) !important;  
+      border-radius: 20px !important;  
+      color: #fff !important;  
+      backdrop-filter: blur(15px);  
+    }  
+    .swal2-title { color: #ffd700 !important; }  
+    .swal2-html-container { color: #e2e8f0 !important; }  
+  </style>  
+</head>  
+<body>  
+  <canvas id="bgCanvas"></canvas>
+
+  <div class="app-card">  
+    <div class="logo-container">  
+      <div class="logo-shape">  
+        <h1 class="lottery-text-logo">  
+          কে হবে  
+          <span>বাংলার কোটিপতি⁉️</span>  
+        </h1>  
+      </div>  
+      <p><b>বউয়ের দোয়া লটারি সেন্টার 😉</b></p>  
+    </div>  
+
+    <!-- ১. লগইন ফর্ম -->  
+    <div id="loginForm" class="form-box active">  
+      <div class="input-group">  
+        <i class="fa-solid fa-envelope input-icon"></i>  
+        <input type="email" id="loginEmail" placeholder="ইমেইল অ্যাড্রেস" required>  
+      </div>  
+      <div class="input-group">  
+        <i class="fa-solid fa-lock input-icon"></i>  
+        <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড" required>  
+        <i class="fa-solid fa-eye toggle-pass" onclick="togglePasswordVisibility('loginPassword', this)"></i>  
+      </div>  
+      <button class="btn-submit" id="btnLogin">  
+        <span>লগইন করুন</span>  
+        <i class="fa-solid fa-arrow-right"></i>  
+      </button>  
+      <div class="links">  
+        <p><a onclick="switchForm('forgotForm')">পাসওয়ার্ড ভুলে গেছেন?</a></p>  
+        <p style="margin-top: 10px;">অ্যাকাউন্ট নেই? <a onclick="switchForm('signupForm')">নতুন রেজিস্টার করুন</a></p>  
+      </div>  
+    </div>  
+
+    <!-- ২. সাইন আপ ফর্ম -->  
+    <div id="signupForm" class="form-box">  
+      <div class="input-group">  
+        <i class="fa-solid fa-user input-icon"></i>  
+        <input type="text" id="signupName" placeholder="আপনার পুরো নাম" required>  
+      </div>  
+      <div class="input-group">  
+        <i class="fa-solid fa-phone input-icon"></i>  
+        <input type="tel" id="signupPhone" placeholder="মোবাইল নম্বর (রেফার কোড হিসেবে ব্যবহার হবে)" required>  
+      </div>  
+      <div class="input-group">  
+        <i class="fa-solid fa-envelope input-icon"></i>  
+        <input type="email" id="signupEmail" placeholder="ইমেইল অ্যাড্রেস" required>  
+      </div>  
+      <div class="input-group">  
+        <i class="fa-solid fa-lock input-icon"></i>  
+        <input type="password" id="signupPassword" placeholder="পাসওয়ার্ড (নূন্যতম ৬ অক্ষর)" required>  
+        <i class="fa-solid fa-eye toggle-pass" onclick="togglePasswordVisibility('signupPassword', this)"></i>  
+      </div>  
+      <div class="input-group">  
+        <i class="fa-solid fa-user-plus input-icon"></i>  
+        <input type="text" id="signupReferCode" placeholder="রেফার কোড / যার নম্বরে খুলছেন (ঐচ্ছিক)">  
+      </div>  
+
+      <button class="btn-submit" id="btnSignup">  
+        <span>অ্যাকাউন্ট খুলুন</span>  
+        <i class="fa-solid fa-user-plus"></i>  
+      </button>  
+      <div class="links">  
+        <p>ইতিমধ্যে অ্যাকাউন্ট আছে? <a onclick="switchForm('loginForm')">লগইন করুন</a></p>  
+      </div>  
+    </div>  
+
+    <!-- ৩. পাসওয়ার্ড রিকভারি ফর্ম -->  
+    <div id="forgotForm" class="form-box">  
+      <p style="font-size: 13px; color: #a0aec0; margin-bottom: 18px; text-align: center; line-height: 1.5;">  
+        আপনার রেজিস্টার্ড ইমেইলটি লিখুন। পাসওয়ার্ড রিসেট করার একটি নিরাপদ লিংক ইনবক্সে পাঠানো হবে।  
+      </p>  
+      <div class="input-group">  
+        <i class="fa-solid fa-envelope input-icon"></i>  
+        <input type="email" id="forgotEmail" placeholder="আপনার ইমেইল" required>  
+      </div>  
+      <button class="btn-submit" id="btnForgot">  
+        <span>রিসেট লিংক পাঠান</span>  
+        <i class="fa-solid fa-paper-plane"></i>  
+      </button>  
+      <div class="links">  
+        <p><a onclick="switchForm('loginForm')">লগইন পেজে ফিরে যান</a></p>  
+      </div>  
+    </div>  
+  </div>  
+
+  <script>  
+    const canvas = document.getElementById('bgCanvas');  
+    const ctx = canvas.getContext('2d');  
+    let particles = [];  
+    function resizeCanvas() {  
+      canvas.width = window.innerWidth;  
+      canvas.height = window.innerHeight;  
+    }  
+    window.addEventListener('resize', resizeCanvas);  
+    resizeCanvas();  
+    class Particle {  
+      constructor() { this.reset(); }  
+      reset() {  
+        this.x = Math.random() * canvas.width;  
+        this.y = Math.random() * canvas.height;  
+        this.size = Math.random() * 3 + 1;  
+        this.speedY = Math.random() * -1 - 0.2;  
+        this.opacity = Math.random() * 0.6 + 0.2;  
+      }  
+      update() {  
+        this.y += this.speedY;  
+        if (this.y < 0) this.reset();  
+      }  
+      draw() {  
+        ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity})`;  
+        ctx.beginPath();  
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);  
+        ctx.fill();  
+      }  
+    }  
+    for (let i = 0; i < 50; i++) { particles.push(new Particle()); }  
+    function animateParticles() {  
+      ctx.clearRect(0, 0, canvas.width, canvas.height);  
+      particles.forEach(p => { p.update(); p.draw(); });  
+      requestAnimationFrame(animateParticles);  
+    }  
+    animateParticles();  
+    function togglePasswordVisibility(inputId, iconElem) {  
+      const input = document.getElementById(inputId);  
+      if (input.type === "password") {  
+        input.type = "text";  
+        iconElem.classList.remove("fa-eye");  
+        iconElem.classList.add("fa-eye-slash");  
+      } else {  
+        input.type = "password";  
+        iconElem.classList.remove("fa-eye-slash");  
+        iconElem.classList.add("fa-eye");  
+      }  
+    }  
+  </script>  
+
+  <script type="module">  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
+    import {   
+      getAuth,   
+      createUserWithEmailAndPassword,   
+      signInWithEmailAndPassword,   
+      sendPasswordResetEmail,  
+      updateProfile,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
+    import {   
+      getFirestore,   
+      doc,   
+      setDoc,  
+      getDoc,
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",  
+      authDomain: "kopa-samsu-95941.firebaseapp.com",  
+      projectId: "kopa-samsu-95941",  
+      storageBucket: "kopa-samsu-95941.firebasestorage.app",  
+      messagingSenderId: "949740806870",  
+      appId: "1:949740806870:web:52e745bba2436172481f77"  
+    };  
+  
+    const app = initializeApp(firebaseConfig);  
+    const auth = getAuth(app);  
+    const db = getFirestore(app);  
+  
+    window.switchForm = function(formId) {  
+      document.querySelectorAll('.form-box').forEach(box => box.classList.remove('active'));  
+      document.getElementById(formId).classList.add('active');  
+    };  
+  
+    function triggerLotteryCelebration() {  
+      const duration = 2.5 * 1000;  
+      const end = Date.now() + duration;  
+      (function frame() {  
+        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ffd700', '#ffa500', '#ffffff', '#00ff88'] });  
+        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ffd700', '#ffa500', '#ffffff', '#00ff88'] });  
+        if (Date.now() < end) { requestAnimationFrame(frame); }  
+      })();  
+    }  
+  
+    window.addEventListener('DOMContentLoaded', () => {  
+      const urlParams = new URLSearchParams(window.location.search);  
+      const refParam = urlParams.get('ref');  
+      if (refParam) {  
+        document.getElementById('signupReferCode').value = refParam;  
+        switchForm('signupForm');  
+      }  
+    });  
+  
+    // সাইন আপ প্রসেস  
+    document.getElementById('btnSignup').addEventListener('click', async () => {  
+      const name = document.getElementById('signupName').value.trim();  
+      const phone = document.getElementById('signupPhone').value.trim();  
+      const email = document.getElementById('signupEmail').value.trim();  
+      const password = document.getElementById('signupPassword').value;  
+      const referCodeInput = document.getElementById('signupReferCode').value.trim();  
+  
+      if (!name || !phone || !email || !password) {  
+        Swal.fire({ icon: 'warning', title: 'অসম্পূর্ণ তথ্য!', text: 'দয়া করে প্রতিটি জরুরি ঘর সঠিকভাবে পূরণ করুন।' });  
+        return;  
+      }  
+  
+      if (password.length < 6) {  
+        Swal.fire({ icon: 'warning', title: 'দুর্বল পাসওয়ার্ড!', text: 'পাসওয়ার্ড নূন্যতম ৬ অক্ষরের হতে হবে।' });  
+        return;  
+      }  
+  
+      Swal.fire({   
+        title: 'অ্যাকাউন্ট তৈরি হচ্ছে...',   
+        allowOutsideClick: false,   
+        didOpen: () => Swal.showLoading()   
+      });  
+  
+      try {  
+        const phoneQuery = query(collection(db, "users"), where("phone", "==", phone));
+        const phoneSnapshot = await getDocs(phoneQuery);
+        
+        if (!phoneSnapshot.empty) {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'নম্বরটি ইতিমধ্যে ব্যবহৃত!', text: 'এই মোবাইল নম্বরটি দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট তৈরি করা হয়েছে। অন্য নম্বর ব্যবহার করুন।' });
+          return;
+        }
+
+        let referredByUid = null;  
+  
+        if (referCodeInput) {  
+          const cleanCode = referCodeInput;  
+          const refDocRef = doc(db, "referral_codes", cleanCode);  
+          const refDocSnap = await getDoc(refDocRef);  
+  
+          if (refDocSnap.exists()) {  
+            referredByUid = refDocSnap.data().uid;  
+          } else {  
+            const usersRef = collection(db, "users");  
+            const q = query(usersRef, where("phone", "==", cleanCode));  
+            const querySnapshot = await getDocs(q);  
+              
+            if (!querySnapshot.empty) {  
+              querySnapshot.forEach((docSnap) => {  
+                referredByUid = docSnap.id;  
+              });  
+            }  
+          }  
+  
+          if (!referredByUid) {  
+            Swal.close();  
+            Swal.fire({ icon: 'error', title: 'ভুল রেফার কোড বা মোবাইল নম্বর!', text: 'আপনি যে মোবাইল নম্বরটি রেফার কোড হিসেবে দিয়েছেন তা সঠিক নয় বা ডাটাবেসে পাওয়া যায়নি।' });  
+            return;  
+          }  
+        }  
+  
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);  
+        const user = userCredential.user;  
+  
+        await updateProfile(user, { displayName: name });  
+  
+        const myReferralCode = phone;  
+  
+        await setDoc(doc(db, "users", user.uid), {  
+          uid: user.uid,  
+          name: name,  
+          phone: phone,  
+          email: email,  
+          balance: 0,  
+          referralCode: myReferralCode,  
+          referredBy: referredByUid || null,  
+          hasDeposited: false,  
+          referCommissionPaid: 0,  
+          createdAt: new Date()  
+        });  
+  
+        await setDoc(doc(db, "referral_codes", myReferralCode), {  
+          uid: user.uid  
+        });  
+  
+        Swal.fire({  
+          icon: 'success',  
+          title: 'রেজিস্ট্রেশন সফল হয়েছে! 🎉',  
+          text: 'এখন আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।',  
+          timer: 1800,  
+          showConfirmButton: false  
+        });  
+  
+        document.getElementById('signupName').value = '';  
+        document.getElementById('signupPhone').value = '';  
+        document.getElementById('signupEmail').value = '';  
+        document.getElementById('signupPassword').value = '';  
+        document.getElementById('signupReferCode').value = '';  
+        document.getElementById('loginEmail').value = email;  
+  
+        setTimeout(() => {  
+          switchForm('loginForm');  
+        }, 1800);  
+  
+      } catch (error) {  
+        Swal.close();  
+        let msg = "সাইন আপ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";  
+        if (error.code === 'auth/email-already-in-use') {  
+          msg = "এই ইমেইল অ্যাড্রেসটি দিয়ে ইতিমধ্যে অ্যাকাউন্ট তৈরি রয়েছে!";  
+        } else if (error.code === 'auth/invalid-email') {  
+          msg = "ইমেইল অ্যাড্রেসটি সঠিক নয়।";  
+        } else if (error.code === 'auth/weak-password') {  
+          msg = "পাসওয়ার্ড আরও শক্তিশালী দিন।";  
+        }  
+        Swal.fire({ icon: 'error', title: 'সাইন আপ ব্যর্থ!', text: msg });  
+      }  
+    });  
+  
+    // লগইন প্রসেস (ব্যান ও ডিলিটেড ইউজার চেক সহ)
+    document.getElementById('btnLogin').addEventListener('click', async () => {  
+      const email = document.getElementById('loginEmail').value.trim();  
+      const password = document.getElementById('loginPassword').value;  
+  
+      if (!email || !password) {  
+        Swal.fire({ icon: 'warning', title: 'তথ্য দিন!', text: 'ইমেইল এবং পাসওয়ার্ড দুটিই পূরণ করুন।' });  
+        return;  
+      }  
+  
+      Swal.fire({ title: 'যাচাই করা হচ্ছে...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });  
+  
+      try {  
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);  
+        const user = userCredential.user;
+
+        // ডাটাবেজ থেকে চেক করা ইউজার ডিলিট বা ব্যান করা হয়েছে কি না
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+
+        if (!userSnap.exists()) {
+          await signOut(auth);
+          Swal.fire({
+            icon: 'error',
+            title: 'অ্যাকাউন্ট ডিলিট করা হয়েছে!',
+            text: 'আপনার অ্যাকাউন্টটি প্রশাসক কর্তৃক স্থায়ীভাবে মুছে ফেলা হয়েছে।'
+          });
+          return;
+        }
+
+        const userData = userSnap.data();
+        if (userData.isBanned === true) {
+          await signOut(auth);
+          Swal.fire({
+            icon: 'error',
+            title: 'অ্যাকাউন্ট ব্যান করা হয়েছে!',
+            text: 'আপনার অ্যাকাউন্টটি স্থগিত বা ব্যান করা হয়েছে। আপনি প্রবেশ করতে পারবেন না।'
+          });
+          return;
+        }
+
+        triggerLotteryCelebration();  
+        Swal.fire({  
+          icon: 'success',  
+          title: 'স্বাগতম! লগইন সফল হয়েছে 🎉',  
+          text: 'আপনাকে লটারি পোর্টালে নিয়ে যাওয়া হচ্ছে...',  
+          timer: 1500,  
+          showConfirmButton: false  
+        });  
+        setTimeout(() => {  
+          window.location.href = "index.html";  
+        }, 1500);  
+
+      } catch (error) {  
+        Swal.fire({  
+          icon: 'error',  
+          title: 'লগইন ব্যর্থ!',  
+          text: 'আপনার ইমেইল অথবা পাসওয়ার্ড ভুল দেওয়া হয়েছে।'  
+        });  
+      }  
+    });  
+  
+    // ফরগেট পাসওয়ার্ড প্রসেস  
+    document.getElementById('btnForgot').addEventListener('click', async () => {  
+      const email = document.getElementById('forgotEmail').value.trim();  
+      if (!email) {  
+        Swal.fire({ icon: 'warning', title: 'ইমেইল দিন!', text: 'পাসওয়ার্ড রিসেট লিংক পেতে আপনার ইমেইলটি লিখুন।' });  
+        return;  
+      }  
+      Swal.fire({ title: 'প্রসেস করা হচ্ছে...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });  
+      try {  
+        await sendPasswordResetEmail(auth, email);  
+        Swal.fire({  
+          icon: 'success',  
+          title: 'রিসেট লিংক পাঠানো হয়েছে!',  
+          text: 'আপনার ইমেইল চেক করুন। পাসওয়ার্ড পরিবর্তনের লিংক পাঠানো হয়েছে।',  
+        }).then(() => {  
+          switchForm('loginForm');  
+        });  
+      } catch (error) {  
+        Swal.fire({  
+          icon: 'error',  
+          title: 'পাঠাতে ব্যর্থ!',  
+          text: 'এই ইমেইল দিয়ে কোনো রেজিস্টার্ড অ্যাকাউন্ট পাওয়া যায়নি।'  
+        });  
+      }  
+    });  
+  </script>  
+</body>  
+</html>

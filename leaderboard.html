@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>লিডারবোর্ড - কোপা সামসু</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #090a0f;
+      --card-bg: rgba(18, 22, 36, 0.9);
+      --gold: #ffd700;
+      --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+      --accent-green: #00e676;
+      --accent-red: #ff4d4d;
+      --text-muted: #a0aec0;
+      --border-color: rgba(255, 215, 0, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Hind Siliguri', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-color);
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 14px 40px 14px;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* হেডার বক্স (লেনদেনের ইতিহাস এর মত স্টাইল) */
+    .page-header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .back-btn {
+      color: #fff;
+      font-size: 18px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* লিডারবোর্ড লিস্ট কন্টেইনার */
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* প্রতিটি প্লেয়ার কার্ড */
+    .leaderboard-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.2s;
+    }
+
+    /* নিজের কার্ড হাইলাইট */
+    .leaderboard-card.is-me {
+      border: 1px solid var(--gold);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(18, 22, 36, 0.95));
+    }
+
+    .player-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* র্যাংক ব্যাজ */
+    .rank-badge {
+      font-size: 14px;
+      font-weight: 800;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    /* টপ ৩ জনের র্যাংক স্পেশাল কালার */
+    .rank-badge.rank-1 { background: var(--gold-gradient); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+    .rank-badge.rank-2 { background: #c0c0c0; color: #000; }
+    .rank-badge.rank-3 { background: #cd7f32; color: #fff; }
+
+    .player-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .player-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .player-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .you-tag {
+      font-size: 10px;
+      background: var(--gold);
+      color: #000;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
+    .player-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .player-right {
+      text-align: right;
+    }
+
+    .win-label {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .win-amount {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
+
+    .loading-text {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-wrapper">
+
+    <!-- হেডার -->
+    <div class="page-header-card">
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <div class="header-title">
+        <i class="fa-solid fa-trophy"></i> সেরা বিজয়ী (লিডারবোর্ড)
+      </div>
+    </div>
+
+    <!-- টপ ১০ প্লেয়ারদের লিস্ট -->
+    <div class="leaderboard-list" id="leaderboardList">
+      <div class="loading-text">ডাটা লোড হচ্ছে...</div>
+    </div>
+
+  </div>
+
+  <!-- Firebase Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      query, 
+      orderBy, 
+      limit, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",
+      authDomain: "kopa-samsu-95941.firebaseapp.com",
+      projectId: "kopa-samsu-95941",
+      storageBucket: "kopa-samsu-95941.firebasestorage.app",
+      messagingSenderId: "949740806870",
+      appId: "1:949740806870:web:52e745bba2436172481f77"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // 'totalWin' ফিল্ডের উপর বেস করে সর্বোচ্চ ১০ জনকে সর্ট করা
+      const leaderboardQuery = query(
+  collection(db, "users"),
+  orderBy("totalWin", "desc"),
+  limit(10)
+);
+      onSnapshot(leaderboardQuery, (snapshot) => {
+        const container = document.getElementById("leaderboardList");
+        container.innerHTML = "";
+
+        if (snapshot.empty) {
+          container.innerHTML = `<div class="loading-text">কোনো তথ্য পাওয়া যায়নি।</div>`;
+          return;
+        }
+
+        let rank = 1;
+        snapshot.forEach((docSnap) => {
+          const user = docSnap.data();
+          const userId = docSnap.id;
+          const isMe = userId === currentUser.uid;
+
+          const totalWin = Number(
+  user.totalWin ??
+  user.totalWinAmount ??
+  user.winAmount ??
+  0
+).toLocaleString('bn-BD');
+          const avatar = user.profilePic || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+          const name = user.name || "ইউজার";
+
+          let rankClass = "";
+          if (rank === 1) rankClass = "rank-1";
+          else if (rank === 2) rankClass = "rank-2";
+          else if (rank === 3) rankClass = "rank-3";
+
+          const card = document.createElement("div");
+          card.className = `leaderboard-card ${isMe ? "is-me" : ""}`;
+
+          card.innerHTML = `
+            <div class="player-left">
+              <div class="rank-badge ${rankClass}">#${rank}</div>
+              <img src="${avatar}" class="player-avatar" alt="User">
+              <div class="player-info">
+                <div class="player-name">
+                  ${name} ${isMe ? `<span class="you-tag">আপনি</span>` : ""}
+                </div>
+                <div class="player-sub">মোট জয়ী প্লেয়ার</div>
+              </div>
+            </div>
+            <div class="player-right">
+              <div class="win-label">টোটাল উইন</div>
+              <div class="win-amount">৳ ${totalWin}</div>
+            </div>
+          `;
+
+          container.appendChild(card);
+          rank++;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

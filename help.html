@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>হেল্প সেন্টার - কোপা সামসু লটারি</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --bg-color: #090a0f;
+      --card-bg: rgba(18, 22, 36, 0.9);
+      --gold: #ffd700;
+      --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+      --accent-green: #00e676;
+      --accent-telegram: #229ed9;
+      --accent-gmail: #ea4335;
+      --text-muted: #a0aec0;
+      --border-color: rgba(255, 215, 0, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
+    body { background: var(--bg-color); color: #fff; padding: 15px; display: flex; justify-content: center; }
+
+    .main-wrapper { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 15px; }
+
+    /* Top Bar */
+    .top-bar { 
+      display: flex; align-items: center; justify-content: space-between; 
+      background: var(--card-bg); padding: 12px 16px; border-radius: 14px; 
+      border: 1px solid var(--border-color); 
+    }
+    .back-btn { color: #fff; font-size: 18px; text-decoration: none; }
+    .page-title { font-size: 16px; font-weight: 800; color: var(--gold); }
+
+    /* Support Banner */
+    .support-banner {
+      background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,140,0,0.05) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 8px;
+    }
+    .support-banner i { font-size: 36px; color: var(--gold); margin-bottom: 4px; }
+    .support-banner h2 { font-size: 18px; font-weight: 800; color: #fff; }
+    .support-banner p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+    /* Support Cards List */
+    .support-list { display: flex; flex-direction: column; gap: 12px; }
+    
+    .support-card {
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between;
+      text-decoration: none; color: inherit; transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .support-card:active { transform: scale(0.98); border-color: var(--gold); }
+
+    .support-left { display: flex; align-items: center; gap: 14px; }
+    
+    .support-icon {
+      width: 48px; height: 48px; border-radius: 14px; display: flex;
+      align-items: center; justify-content: center; font-size: 22px;
+    }
+    .icon-telegram { background: rgba(34, 158, 217, 0.15); color: var(--accent-telegram); border: 1px solid rgba(34, 158, 217, 0.3); }
+    .icon-gmail { background: rgba(234, 67, 53, 0.15); color: var(--accent-gmail); border: 1px solid rgba(234, 67, 53, 0.3); }
+    .icon-live { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.3); }
+
+    .support-info { display: flex; flex-direction: column; gap: 3px; }
+    .support-name { font-size: 15px; font-weight: 700; color: #fff; }
+    .support-desc { font-size: 12px; color: var(--text-muted); }
+
+    .support-action { color: var(--text-muted); font-size: 14px; }
+
+    /* FAQ Section */
+    .faq-section { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
+    .section-title { font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .section-title i { color: var(--gold); }
+
+    .faq-card {
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .faq-q { font-size: 13px; font-weight: 700; color: var(--gold); display: flex; justify-content: space-between; align-items: center; }
+    .faq-a { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <div class="page-title"><i class="fa-solid fa-headset"></i> হেল্প ও সাপোর্ট</div>
+      <div style="width: 18px;"></div>
+    </div>
+
+    <!-- Banner -->
+    <div class="support-banner">
+      <i class="fa-solid fa-shield-heart"></i>
+      <h2>২৪/৭ গ্রাহক সেবা প্রস্তুত!</h2>
+      <p>আপনার যেকোনো সমস্যা বা তথ্যের জন্য নিচের মাধ্যমগুলোতে আমাদের সাথে যোগাযোগ করুন। আমাদের টিম ২৪ ঘণ্টা আপনার সেবায় নিয়োজিত।</p>
+    </div>
+
+    <!-- Support Options List -->
+    <div class="support-list">
+      
+      <!-- Telegram Group -->
+      <a href="https://t.me/your_telegram_group_link" target="_blank" class="support-card">
+        <div class="support-left">
+          <div class="support-icon icon-telegram">
+            <i class="fa-brands fa-telegram"></i>
+          </div>
+          <div class="support-info">
+            <div class="support-name">অফিশিয়াল টেলিগ্রাম গ্রুপ</div>
+            <div class="support-desc">সরাসরি যুক্ত হোন ও আপডেট জানুন</div>
+          </div>
+        </div>
+        <div class="support-action"><i class="fa-solid fa-chevron-right"></i></div>
+      </a>
+
+      <!-- Gmail Support -->
+      <a href="mailto:support@kopasamsu.com" class="support-card">
+        <div class="support-left">
+          <div class="support-icon icon-gmail">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="support-info">
+            <div class="support-name">জিমেইল সাপোর্ট</div>
+            <div class="support-desc">support@kopasamsu.com</div>
+          </div>
+        </div>
+        <div class="support-action"><i class="fa-solid fa-chevron-right"></i></div>
+      </a>
+
+      <!-- 24/7 Live Support / Telegram Admin / Hotline -->
+      <a href="https://t.me/your_admin_username" target="_blank" class="support-card">
+        <div class="support-left">
+          <div class="support-icon icon-live">
+            <i class="fa-solid fa-headset"></i>
+          </div>
+          <div class="support-info">
+            <div class="support-name">২৪/৭ লাইভ চ্যাট সাপোর্ট</div>
+            <div class="support-desc">সরাসরি অ্যাডমিনের সাথে কথা বলুন</div>
+          </div>
+        </div>
+        <div class="support-action"><i class="fa-solid fa-chevron-right"></i></div>
+      </a>
+
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <div class="section-title"><i class="fa-solid fa-circle-question"></i> সাধারণ জিজ্ঞাসা (FAQ)</div>
+      
+      <div class="faq-card">
+        <div class="faq-q">ডিপোজিট করতে কতক্ষণ সময় লাগে?</div>
+        <div class="faq-a">সাধারণত পেমেন্ট সাবমিট করার ৫ থেকে ১৫ মিনিটের মধ্যে ব্যালেন্সে টাকা যোগ হয়ে যায়।</div>
+      </div>
+
+      <div class="faq-card">
+        <div class="faq-q">লটারির ফলাফল কিভাবে দেখতে পাবো?</div>
+        <div class="faq-a">ড্র টাইম শেষ হওয়ার পর লটারি পেজে স্বয়ংক্রিয়ভাবে বিজয়ী কোডগুলো দেখতে পাবেন।</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

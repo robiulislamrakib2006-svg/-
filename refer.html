@@ -1,0 +1,286 @@
+<!DOCTYPE html>  
+<html lang="bn">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+  <title>রেফারেল ও ইনকাম - কোপা সামসু লটারি</title>    
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>    
+  <style>  
+    :root {  
+      --bg-color: #090a0f;  
+      --card-bg: rgba(18, 22, 36, 0.9);  
+      --gold: #ffd700;  
+      --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);  
+      --accent-green: #00e676;  
+      --accent-blue: #00b4d8;  
+      --text-muted: #a0aec0;  
+      --border-color: rgba(255, 215, 0, 0.25);  
+    }  
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }  
+    body { background: var(--bg-color); color: #fff; padding: 15px; display: flex; justify-content: center; }  
+    .main-wrapper { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 15px; }  
+    .top-bar {   
+      display: flex; align-items: center; justify-content: space-between;   
+      background: var(--card-bg); padding: 12px 16px; border-radius: 14px;   
+      border: 1px solid var(--border-color);   
+    }  
+    .back-btn { color: #fff; font-size: 18px; text-decoration: none; }  
+    .page-title { font-size: 16px; font-weight: 800; color: var(--gold); }  
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }  
+    .stat-card {  
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08);  
+      border-radius: 14px; padding: 12px 8px; text-align: center; display: flex; flex-direction: column; gap: 4px;  
+    }  
+    .stat-num { font-size: 16px; font-weight: 800; color: var(--gold); }  
+    .stat-label { font-size: 11px; color: var(--text-muted); }  
+    .ref-box {  
+      background: var(--card-bg); border: 1px solid var(--border-color);  
+      border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;  
+    }  
+    .ref-label { font-size: 13px; color: var(--text-muted); }  
+    .ref-input-group { display: flex; gap: 8px; }  
+    .ref-input {  
+      flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);  
+      border-radius: 10px; padding: 10px 12px; color: var(--gold); font-size: 14px; font-weight: 700; text-align: center; outline: none;  
+    }  
+    .copy-btn {  
+      background: var(--gold-gradient); border: none; border-radius: 10px; padding: 0 16px;  
+      color: #000; font-weight: 800; font-size: 13px; cursor: pointer; transition: transform 0.2s;  
+    }  
+    .copy-btn:active { transform: scale(0.95); }  
+    .section-header { font-size: 14px; font-weight: 700; color: #fff; margin-top: 5px; display: flex; align-items: center; gap: 8px; }  
+    .section-header i { color: var(--gold); }  
+    .ref-list { display: flex; flex-direction: column; gap: 10px; }  
+    .ref-item {  
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08);  
+      border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;  
+    }  
+    .ref-user-info { display: flex; flex-direction: column; gap: 2px; }  
+    .ref-username { font-size: 14px; font-weight: 700; color: #fff; }  
+    .ref-date { font-size: 11px; color: var(--text-muted); }  
+    .ref-commission { text-align: right; display: flex; flex-direction: column; gap: 2px; }  
+    .com-amount { font-size: 14px; font-weight: 800; color: var(--accent-green); }  
+    .com-status { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 6px; display: inline-block; }  
+    .status-active { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); }  
+    .status-inactive { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }  
+    .empty-state { text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 13px; }  
+  </style>  
+</head>  
+<body>    
+  <div class="main-wrapper">  
+    <div class="top-bar">  
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>  
+      <div class="page-title"><i class="fa-solid fa-users"></i> রেফারেল ও ইনকাম</div>  
+      <div style="width: 18px;"></div>  
+    </div>  
+
+    <div class="stats-grid">  
+      <div class="stat-card">  
+        <div class="stat-num" id="totalRefs">0</div>  
+        <div class="stat-label">মোট রেফার</div>  
+      </div>  
+      <div class="stat-card">  
+        <div class="stat-num" id="activeRefs">0</div>  
+        <div class="stat-label">অ্যাক্টিভ রেফার</div>  
+      </div>  
+      <div class="stat-card">  
+        <div class="stat-num" id="totalEarnings">৳0</div>  
+        <div class="stat-label">মোট ইনকাম</div>  
+      </div>  
+    </div>  
+
+    <div class="ref-box">  
+      <div class="ref-label"><i class="fa-solid fa-share-nodes"></i> আপনার মোবাইল নম্বরটিই আপনার রেফার কোড। বন্ধুদের সাথে শেয়ার করুন:</div>  
+      <div class="ref-input-group">  
+        <input type="text" id="refCodeInput" class="ref-input" readonly value="লোড হচ্ছে...">  
+        <button class="copy-btn" onclick="copyRefCode()"><i class="fa-regular fa-copy"></i> কপি</button>  
+      </div>  
+      <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">  
+        * কেউ আপনার মোবাইল নম্বরটি রেফার কোড হিসেবে ব্যবহার করে অ্যাকাউন্ট খুললে এবং তার <b>প্রথম ডিপোজিট</b> সম্পন্ন করলে, আপনি পাবেন স্বয়ংক্রিয়ভাবে ৫% কমিশন (একবারই)!  
+      </div>  
+    </div>  
+
+    <div class="section-header">  
+      <i class="fa-solid fa-list-ul"></i> আপনার রেফারেড ইউজারদের তালিকা  
+    </div>  
+
+    <div id="referredListContainer" class="ref-list">  
+      <div class="empty-state">তালিকা লোড হচ্ছে...</div>  
+    </div>  
+  </div>    
+
+  <script type="module">  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
+    import {   
+      getFirestore, doc, getDoc, collection, query, where, onSnapshot, getDocs, updateDoc, increment, addDoc, serverTimestamp   
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",  
+      authDomain: "kopa-samsu-95941.firebaseapp.com",  
+      projectId: "kopa-samsu-95941",  
+      storageBucket: "kopa-samsu-95941.firebasestorage.app",  
+      messagingSenderId: "949740806870",  
+      appId: "1:949740806870:web:52e745bba2436172481f77"  
+    };  
+  
+    const app = initializeApp(firebaseConfig);  
+    const auth = getAuth(app);  
+    const db = getFirestore(app);  
+  
+    onAuthStateChanged(auth, async (user) => {  
+      if (user) {  
+        await fetchUserData(user.uid);  
+        fetchReferrals(user.uid);  
+      } else {  
+        window.location.href = "login.html";  
+      }  
+    });  
+
+    async function fetchUserData(uid) {  
+      const userDocRef = doc(db, "users", uid);  
+      const userDoc = await getDoc(userDocRef);  
+      if (userDoc.exists()) {  
+        const data = userDoc.data();  
+        const myPhoneCode = data.phone || data.referralCode || '';  
+        document.getElementById('refCodeInput').value = myPhoneCode;  
+      }  
+    }  
+
+    function fetchReferrals(uid) {  
+      const q = query(  
+        collection(db, "users"),  
+        where("referredBy", "==", uid)  
+      );  
+  
+      onSnapshot(q, async (snapshot) => {  
+        const container = document.getElementById('referredListContainer');  
+        let totalRefs = snapshot.size;  
+        let activeRefs = 0;  
+        let totalEarnings = 0;  
+  
+        if (snapshot.empty) {  
+          container.innerHTML = `  
+            <div class="empty-state">  
+              <i class="fa-solid fa-user-slash" style="font-size: 30px; margin-bottom: 8px; opacity: 0.4;"></i>  
+              <div>এখনো কেউ আপনার রেফারে জয়েন করেনি!</div>  
+            </div>  
+          `;  
+          updateStats(0, 0, 0);  
+          return;  
+        }  
+  
+        let html = '';  
+        const mainUserRef = doc(db, "users", uid);
+        
+        for (const docSnap of snapshot.docs) {  
+          const uData = docSnap.data();  
+          const refUserId = docSnap.id;
+          
+          let hasDeposited = uData.hasDeposited || false;   
+          let commissionEarned = uData.referCommissionPaid || 0;   
+
+          if (!hasDeposited) {
+            try {
+              const depQuery = query(
+                collection(db, "deposits"),
+                where("userId", "==", refUserId),
+                where("status", "==", "approved")
+              );
+              const depSnapshot = await getDocs(depQuery);
+              
+              if (!depSnapshot.empty) {
+                let firstDepositAmount = Number(depSnapshot.docs[0].data().amount || 0);
+                commissionEarned = Math.floor(firstDepositAmount * 0.05); // ৫% কমিশন
+                hasDeposited = true;
+
+                if (commissionEarned > 0) {
+                  // ১. মূল ইউজারের ব্যালেন্সে কমিশন যোগ করা
+                  await updateDoc(mainUserRef, {
+                    balance: increment(commissionEarned)
+                  });
+
+                  // ২. রেফারেড ইউজারের ডাটাবেসে ফ্ল্যাগ আপডেট করা যাতে ডাবল কমিশন না হয়
+                  await updateDoc(doc(db, "users", refUserId), {
+                    hasDeposited: true,
+                    referCommissionPaid: commissionEarned
+                  });
+
+                  // ৩. ট্রানজেকশন হিস্টরিতে রেফার কমিশন এন্ট্রি যোগ করা
+                  await addDoc(collection(db, "transactions"), {
+                    userId: uid,
+                    type: "refer",
+                    amount: commissionEarned,
+                    status: "approved",
+                    trxId: "REF-" + Math.floor(100000 + Math.random() * 900000),
+                    createdAt: serverTimestamp()
+                  });
+                }
+              }
+            } catch (err) {
+              console.error("Deposit check error:", err);
+            }
+          }
+  
+          if (hasDeposited) {  
+            activeRefs++;  
+            totalEarnings += commissionEarned;  
+          }  
+  
+          let dateStr = 'সম্প্রতি';  
+          if (uData.createdAt) {  
+            const d = uData.createdAt.toDate ? uData.createdAt.toDate() : new Date(uData.createdAt);  
+            dateStr = d.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' });  
+          }  
+  
+          // শুধু "অ্যাক্টিভ" লেখা থাকবে (ব্র্যাকেটে টাকার পরিমাণ বাদ দেওয়া হয়েছে)
+          const statusBadge = hasDeposited   
+            ? `<span class="com-status status-active"><i class="fa-solid fa-check"></i> অ্যাক্টিভ</span>`  
+            : `<span class="com-status status-inactive">পেন্ডিং (ডিপোজিট করেনি)</span>`;  
+  
+          html += `  
+            <div class="ref-item">  
+              <div class="ref-user-info">  
+                <div class="ref-username"><i class="fa-solid fa-user"></i> ${uData.name || 'ইউজার'}</div>  
+                <div class="ref-date"><i class="fa-regular fa-calendar"></i> যোগদানের তারিখ: ${dateStr}</div>  
+              </div>  
+              <div class="ref-commission">  
+                <div class="com-amount">${hasDeposited ? '+৳' + commissionEarned : '৳0'}</div>  
+                ${statusBadge}  
+              </div>  
+            </div>  
+          `;  
+        }  
+  
+        container.innerHTML = html;  
+        updateStats(totalRefs, activeRefs, totalEarnings);  
+      });  
+    }  
+  
+    function updateStats(total, active, earnings) {  
+      document.getElementById('totalRefs').innerText = total;  
+      document.getElementById('activeRefs').innerText = active;  
+      document.getElementById('totalEarnings').innerText = '৳' + earnings;  
+    }  
+  
+    window.copyRefCode = () => {  
+      const codeInput = document.getElementById('refCodeInput');  
+      codeInput.select();  
+      codeInput.setSelectionRange(0, 99999);  
+      navigator.clipboard.writeText(codeInput.value);  
+  
+      Swal.fire({  
+        toast: true,  
+        position: 'top-end',  
+        icon: 'success',  
+        title: 'রেফার কোড (নম্বর) কপি সফল হয়েছে!',  
+        showConfirmButton: false,  
+        timer: 2000  
+      });  
+    };  
+  </script>  
+</body>  
+</html>
