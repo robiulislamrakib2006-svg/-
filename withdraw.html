@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>উইথড্র রিকোয়েস্ট - কোপা সামসু লটারি</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --bg-color: #090a0f;
+      --card-bg: rgba(18, 22, 36, 0.9);
+      --gold: #ffd700;
+      --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+      --accent-green: #00e676;
+      --accent-red: #ff5252;
+      --text-muted: #a0aec0;
+      --border-color: rgba(255, 215, 0, 0.25);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
+    body { background: var(--bg-color); color: #fff; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+    .main-wrapper { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 15px; }
+
+    /* Header Style */
+    .top-bar {   
+      display: flex; align-items: center; justify-content: space-between;   
+      background: var(--card-bg); padding: 12px 16px; border-radius: 14px;   
+      border: 1px solid var(--border-color);   
+    }
+    .back-btn { color: #fff; font-size: 18px; text-decoration: none; cursor: pointer; }  
+    .page-title { font-size: 16px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+    
+    .history-btn-box {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      color: #fff; text-decoration: none; cursor: pointer;
+    }
+    .history-btn-box span { font-size: 10px; font-weight: 700; color: var(--gold); }
+
+    /* Balance Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card {  
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08);  
+      border-radius: 14px; padding: 14px 10px; text-align: center; display: flex; flex-direction: column; gap: 4px;  
+    }
+    .stat-num { font-size: 18px; font-weight: 800; color: var(--gold); }  
+    .stat-label { font-size: 12px; color: var(--text-muted); }  
+
+    /* Form Container */
+    .form-box {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .section-label { font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; }
+
+    /* Method Selection Grid */
+    .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .method-card {
+      background: rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s;
+    }
+    .method-card.selected { border-color: var(--gold); background: rgba(255, 215, 0, 0.08); }
+    .method-logo { width: 32px; height: 32px; object-fit: contain; border-radius: 50%; }
+    .method-name { font-size: 14px; font-weight: 700; color: #fff; }
+
+    /* Input Fields */
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .custom-input {
+      width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px; padding: 12px 14px; color: #fff; font-size: 15px; font-weight: 600; outline: none;
+    }
+    .custom-input:focus { border-color: var(--gold); }
+
+    /* Calculation & Limit text */
+    .calc-info {
+      background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 12px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 13px;
+    }
+    .calc-value { color: var(--accent-green); font-weight: 800; font-size: 15px; }
+    .limit-warning { font-size: 11px; color: var(--accent-red); font-weight: 600; }
+
+    /* Submit Button */
+    .submit-btn {
+      background: var(--gold-gradient); border: none; border-radius: 12px; padding: 14px;
+      color: #000; font-weight: 800; font-size: 15px; cursor: pointer; transition: transform 0.2s; text-align: center;
+    }
+    .submit-btn:active { transform: scale(0.98); }
+
+    /* History Modal Style */
+    #historyModal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 15px;
+    }
+    .history-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 16px; width: 100%; max-width: 450px; max-height: 80vh;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .history-header {
+      padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .history-body {
+      padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+    }
+  </style>
+</head>
+<body>  
+
+  <div class="main-wrapper">  
+    <!-- Header -->
+    <div class="top-bar">  
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>  
+      <div class="page-title"><i class="fa-solid fa-money-bill-transfer"></i> উইথড্র রিকোয়েস্ট</div>  
+      <a href="javascript:void(0)" onclick="openHistoryModal()" class="history-btn-box">  
+        <i class="fa-solid fa-clock-rotate-left" style="font-size: 16px;"></i>  
+        <span>মাই হিস্ট্রি</span>  
+      </a>  
+    </div>  
+
+    <!-- Balance Stats -->
+    <div class="stats-grid">  
+      <div class="stat-card">  
+        <div class="stat-num" id="totalBalance">৳0</div>  
+        <div class="stat-label">মূল ব্যালেন্স</div>  
+      </div>  
+      <div class="stat-card">  
+        <div class="stat-num" id="withdrawableBalance" style="color: var(--accent-green);">৳0</div>  
+        <div class="stat-label">উত্তোলনযোগ্য (রেফার+উইন)</div>  
+      </div>  
+    </div>  
+
+    <!-- Form -->
+    <div class="form-box">  
+      <div class="section-label"><i class="fa-solid fa-wallet"></i> পেমেন্ট মেথড সিলেক্ট করুন</div>  
+      <div class="method-grid">  
+        <div class="method-card selected" onclick="selectMethod('bKash', this)">  
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAMwSD3Ygh9kX_gLMze8V4Ed0SAc2ENbt9hav7RFIH9g&s=10" class="method-logo" alt="Bkash">  
+          <span class="method-name">বিকাশ</span>  
+        </div>  
+        <div class="method-card" onclick="selectMethod('Nagad', this)">  
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy-ePfOnTZeIse6MYjisWrece1F7Mqg-9W9v64xzk4d-kqpAZ8AxWty0Di&s=10" class="method-logo" alt="Nagad">  
+          <span class="method-name">নগদ</span>  
+        </div>  
+      </div>  
+
+      <div class="input-group">  
+        <label class="input-label">যে নাম্বারে টাকা নিতে চান</label>  
+        <input type="number" id="receiverNumber" class="custom-input" placeholder="যেমন: 018xxxxxxxx">  
+      </div>  
+
+      <div class="input-group">  
+        <label class="input-label">উত্তোলনের পরিমাণ</label>  
+        <input type="number" id="withdrawAmount" class="custom-input" placeholder="টাকার পরিমাণ লিখুন" oninput="calculateReceiveAmount()">  
+        <div class="limit-warning" id="limitText">সর্বনিম্ন উইথড্র লিমিট লোড হচ্ছে...</div>  
+      </div>  
+
+      <div class="calc-info">  
+        <span>৫% ফি বাদ দিয়ে পাবেন:</span>  
+        <span class="calc-value" id="finalReceiveAmount">৳০</span>  
+      </div>  
+
+      <button class="submit-btn" onclick="submitWithdrawRequest()">উইথড্র কনফার্ম করুন</button>  
+    </div>  
+  </div>    
+
+  <!-- History Modal -->
+  <div id="historyModal">
+    <div class="history-card">
+      <div class="history-header">
+        <span style="font-weight:700; color:var(--gold);"><i class="fa-solid fa-history"></i> গত ৭ দিনের হিস্ট্রি</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:18px;" onclick="closeHistoryModal()"></i>
+      </div>
+      <div class="history-body" id="historyListContainer">
+        <div style="text-align:center; color:var(--text-muted);">লোড হচ্ছে...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",  
+      authDomain: "kopa-samsu-95941.firebaseapp.com",  
+      projectId: "kopa-samsu-95941",  
+      storageBucket: "kopa-samsu-95941.firebasestorage.app",  
+      messagingSenderId: "949740806870",  
+      appId: "1:949740806870:web:52e745bba2436172481f77"  
+    };  
+  
+    const app = initializeApp(firebaseConfig);  
+    const auth = getAuth(app);  
+    const db = getFirestore(app);  
+  
+    let selectedMethod = 'bKash';  
+    let currentUser = null;  
+    let userData = null;  
+    let withdrawableLimit = 300;  
+    let maxWithdrawableAmount = 0;  
+
+    window.selectMethod = (method, element) => {  
+      selectedMethod = method;  
+      document.querySelectorAll('.method-card').forEach(el => el.classList.remove('selected'));  
+      element.classList.add('selected');  
+    };  
+
+    onAuthStateChanged(auth, async (user) => {  
+      if (user) {  
+        currentUser = user;  
+        await fetchSettingsAndUser(user.uid);  
+        initRealtimeHistory(user.uid);
+      } else {  
+        window.location.href = "login.html";  
+      }  
+    });  
+
+    async function fetchSettingsAndUser(uid) {  
+      try {  
+        const settingsSnap = await getDoc(doc(db, "settings", "general"));  
+        if (settingsSnap.exists()) {  
+          withdrawableLimit = Number(settingsSnap.data().minWithdraw || 300);  
+        }  
+        document.getElementById('limitText').innerText = `* সর্বনিম্ন উইথড্র লিমিট: ৳${withdrawableLimit} টাকা`;  
+
+        const userSnap = await getDoc(doc(db, "users", uid));  
+        if (userSnap.exists()) {  
+          userData = userSnap.data();  
+          const totalBal = userData.balance || 0;  
+
+          let refComm = 0;
+          let winAmount = 0;
+          let totalWithdrawn = 0;
+
+          const trxQuery = query(collection(db, "transactions"), where("userId", "==", uid));
+          const trxSnap = await getDocs(trxQuery);
+
+          trxSnap.forEach(trxDoc => {
+            const tData = trxDoc.data();
+
+            if (tData.type === 'withdraw' && (tData.status === 'approved' || tData.status === 'pending')) {
+              totalWithdrawn += Number(tData.amount || 0);
+            }
+
+            if (tData.status === 'approved') {
+              if (tData.type === 'refer') {
+                refComm += Number(tData.amount || 0);
+              }
+              if (tData.type === 'win' || tData.type === 'lottery_win') {
+                winAmount += Number(tData.amount || 0);
+              }
+            }
+          });
+
+          if (refComm === 0) {
+            refComm = Number(userData.referCommissionPaid || userData.referCommission || userData.commission || 0);
+          }
+
+          if (winAmount === 0) {
+            winAmount = Number(userData.totalWinAmount || userData.winAmount || userData.totalWin || 0);
+          }
+
+          maxWithdrawableAmount = (refComm + winAmount) - totalWithdrawn;
+          if (maxWithdrawableAmount < 0) maxWithdrawableAmount = 0;
+          if (maxWithdrawableAmount > totalBal) maxWithdrawableAmount = totalBal;
+
+          document.getElementById('totalBalance').innerText = `৳${totalBal}`;  
+          document.getElementById('withdrawableBalance').innerText = `৳${maxWithdrawableAmount}`;  
+        }  
+      } catch (err) {  
+        console.error("Data fetch error:", err);  
+      }  
+    }  
+
+    window.calculateReceiveAmount = () => {  
+      const amountInput = Number(document.getElementById('withdrawAmount').value) || 0;  
+      if (amountInput > 0) {  
+        const fee = amountInput * 0.05;  
+        const finalAmount = Math.floor(amountInput - fee);  
+        document.getElementById('finalReceiveAmount').innerText = `৳${finalAmount}`;  
+      } else {  
+        document.getElementById('finalReceiveAmount').innerText = `৳০`;  
+      }  
+    };  
+
+    let cachedWithdrawHistory = [];
+
+    function initRealtimeHistory(uid) {
+      // Index error এড়াতে orderBy বাদ দিয়ে শুধু where রাখা হয়েছে এবং লোকালি সর্ট করা হবে
+      const q = query(collection(db, "withdraws"), where("userId", "==", uid));
+      onSnapshot(q, (snapshot) => {
+        cachedWithdrawHistory = [];
+        snapshot.forEach((docSnap) => {
+          cachedWithdrawHistory.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // লোকালি নতুন থেকে পুরানো (Descending) অর্ডারে সাজানো
+        cachedWithdrawHistory.sort((a, b) => {
+          const timeA = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+          return timeB - timeA;
+        });
+      });
+    }
+
+    window.openHistoryModal = () => {
+      if (!currentUser) return;
+      document.getElementById('historyModal').style.display = 'flex';
+      renderHistoryList(cachedWithdrawHistory);
+    };
+
+    function renderHistoryList(historyData) {
+      const container = document.getElementById('historyListContainer');
+      container.innerHTML = '';
+
+      if (!historyData || historyData.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">কোনো উইথড্র রিকোয়েস্ট নেই।</div>';
+        return;
+      }
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      let count = 0;
+      historyData.forEach(data => {
+        const createdAt = data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : new Date();
+
+        if (createdAt >= sevenDaysAgo) {
+          count++;
+          let statusText = 'পেন্ডিং';
+          let statusColor = '#ff9800';
+
+          if (data.status === 'approved') {
+            statusText = 'সফল (এপ্রুভড)';
+            statusColor = '#00e676';
+          } else if (data.status === 'rejected') {
+            statusText = 'রিজেক্টেড';
+            statusColor = '#ff5252';
+          }
+
+          const dateStr = createdAt.toLocaleString('bn-BD', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+          const methodName = data.method === 'bKash' ? 'বিকাশ' : (data.method === 'Nagad' ? 'নগদ' : data.method);
+
+          const itemHTML = `
+            <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <span style="font-weight:700; font-size:14px;">৳${data.amount} (${methodName})</span>
+                <span style="font-size:11px; color:var(--text-muted);">${data.receiverNumber} • ${dateStr}</span>
+              </div>
+              <span style="font-size:12px; font-weight:700; color:${statusColor}; background:${statusColor}22; padding:4px 8px; border-radius:6px;">${statusText}</span>
+            </div>
+          `;
+          container.innerHTML += itemHTML;
+        }
+      });
+
+      if (count === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">গত ৭ দিনের মধ্যে কোনো উইথড্র রিকোয়েস্ট নেই।</div>';
+      }
+    }
+
+    window.closeHistoryModal = () => {
+      document.getElementById('historyModal').style.display = 'none';
+    };
+
+    window.submitWithdrawRequest = async () => {  
+      if (!currentUser || !userData) return;  
+
+      const number = document.getElementById('receiverNumber').value.trim();  
+      const amount = Number(document.getElementById('withdrawAmount').value);  
+
+      if (!number || number.length < 11) {  
+        Swal.fire({ title: 'ত্রুটি!', text: 'সঠিক বিকাশ বা নগদ নাম্বার দিন।', icon: 'error', background: '#121624', color: '#fff' });  
+        return;  
+      }  
+
+      if (!amount || amount < withdrawableLimit) {  
+        Swal.fire({ title: 'সীমা পার হয়েছে!', text: `সর্বনিম্ন উইথড্র পরিমাণ ৳${withdrawableLimit} টাকা।`, icon: 'warning', background: '#121624', color: '#fff' });  
+        return;  
+      }  
+
+      if (amount > maxWithdrawableAmount) {  
+        Swal.fire({   
+          title: 'উত্তোলন সম্ভব নয়!',   
+          text: 'ডিপোজিটের টাকা সরাসরি উইথড্র করা যায় না। শুধুমাত্র রেফার ও লটারি জয়ের টাকা উত্তোলন করতে পারবেন।',   
+          icon: 'error',   
+          background: '#121624',   
+          color: '#fff'   
+        });  
+        return;  
+      }  
+
+      const currentBalance = userData.balance || 0;  
+      if (amount > currentBalance) {  
+        Swal.fire({ title: 'অপর্যাপ্ত ব্যালেন্স!', text: 'আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই।', icon: 'error', background: '#121624', color: '#fff' });  
+        return;  
+      }  
+
+      const methodDisplayName = selectedMethod === 'bKash' ? 'বিকাশ' : 'নগদ';
+
+      const confirm = await Swal.fire({  
+        title: 'উইথড্র কনফার্ম করবেন?',  
+        text: `আপনার ${methodDisplayName} নাম্বারে ৳${amount} টাকার রিকোয়েস্ট জমা হবে (৫% ফি প্রযোজ্য)।`,  
+        icon: 'question',  
+        showCancelButton: true,  
+        confirmButtonText: 'হ্যাঁ, কনফার্ম',  
+        cancelButtonText: 'বাতিল',  
+        background: '#121624',  
+        color: '#fff'  
+      });  
+
+      if (!confirm.isConfirmed) return;  
+
+      try {  
+        Swal.showLoading();  
+        const userRef = doc(db, "users", currentUser.uid);  
+
+        await runTransaction(db, async (transaction) => {  
+          const userSnap = await transaction.get(userRef);  
+          if (!userSnap.exists()) throw "User does not exist!";  
+
+          const newBalance = (userSnap.data().balance || 0) - amount;  
+
+          transaction.update(userRef, { balance: newBalance });  
+
+          const withdrawRef = doc(collection(db, "withdraws"));  
+          transaction.set(withdrawRef, {  
+            userId: currentUser.uid,  
+            userName: userData.name || 'ইউজার',  
+            amount: amount,  
+            method: selectedMethod,  
+            receiverNumber: number,  
+            status: 'pending',  
+            createdAt: serverTimestamp()  
+          });  
+
+          const trxRef = doc(collection(db, "transactions"));  
+          transaction.set(trxRef, {  
+            userId: currentUser.uid,  
+            type: 'withdraw',  
+            amount: amount,  
+            method: selectedMethod,  
+            receiverNumber: number,  
+            status: 'pending',  
+            trxId: 'WD-' + Math.floor(100000 + Math.random() * 900000),  
+            createdAt: serverTimestamp()  
+          });  
+        });  
+
+        await Swal.fire({  
+          title: 'সফল!',  
+          text: 'আপনার উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে।',  
+          icon: 'success',  
+          background: '#121624',  
+          color: '#fff',  
+          timer: 2000,  
+          showConfirmButton: false  
+        });  
+
+        window.location.href = "index.html";  
+
+      } catch (err) {  
+        console.error(err);  
+        Swal.fire({ title: 'সমস্যা হয়েছে', text: err.message || 'আবার চেষ্টা করুন।', icon: 'error', background: '#121624', color: '#fff' });  
+      }  
+    };  
+  </script>  
+</body>  
+</html>
