@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>আমার টিকিটসমূহ - কোপা সামসু লটারি</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #090a0f;
+      --card-bg: rgba(18, 22, 36, 0.92);
+
+      --gold: #ffd700;
+      --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+
+      --accent-green: #00e676;
+      --accent-red: #ff4d4d;
+      --accent-blue: #38bdf8;
+
+      --text-muted: #a0aec0;
+      --border-color: rgba(255, 215, 0, 0.25);
+
+      --shadow: 0 4px 18px rgba(0,0,0,0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Hind Siliguri', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top right, rgba(255, 215, 0, 0.06), transparent 35%),
+        var(--bg-color);
+      color: #fff;
+      min-height: 100vh;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding-bottom: 25px;
+    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      background: var(--card-bg);
+      padding: 12px 16px;
+
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      position: sticky;
+      top: 10px;
+      z-index: 50;
+    }
+
+    .back-btn {
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #fff;
+      font-size: 17px;
+      text-decoration: none;
+
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      transform: scale(0.92);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .page-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gold);
+
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .header-spacer {
+      width: 34px;
+    }
+
+    /* =========================
+       FILTER TABS
+    ========================= */
+
+    .filter-tabs {
+      display: flex;
+      gap: 7px;
+
+      background: rgba(255, 255, 255, 0.04);
+      padding: 6px;
+
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .tab-btn {
+      flex: 1;
+
+      padding: 9px 5px;
+
+      border: none;
+      background: transparent;
+
+      color: var(--text-muted);
+
+      font-weight: 700;
+      font-size: 12px;
+
+      border-radius: 9px;
+      cursor: pointer;
+
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--gold-gradient);
+      color: #000;
+      box-shadow: 0 3px 10px rgba(255, 180, 0, 0.2);
+    }
+
+    .tab-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* =========================
+       TICKET LIST
+    ========================= */
+
+    #ticketsList {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ticket-card {
+      background: var(--card-bg);
+
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+
+      padding: 16px;
+
+      position: relative;
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+
+      box-shadow: var(--shadow);
+
+      animation: cardIn 0.25s ease;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ticket-card::before {
+      content: "";
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+
+      width: 3px;
+
+      background: var(--gold-gradient);
+    }
+
+    .ticket-card.won-card::before {
+      background: var(--accent-green);
+    }
+
+    .ticket-card.lost-card::before {
+      background: var(--accent-red);
+    }
+
+    .ticket-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 10px;
+
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-bottom: 9px;
+    }
+
+    .ticket-serial {
+      min-width: 0;
+
+      font-size: 16px;
+      font-weight: 800;
+
+      color: var(--gold);
+
+      letter-spacing: 0.4px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ticket-price {
+      flex-shrink: 0;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      color: #fff;
+
+      background: rgba(255,255,255,0.05);
+      padding: 4px 8px;
+
+      border-radius: 7px;
+    }
+
+    .ticket-info-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 10px;
+
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .info-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      min-width: 0;
+    }
+
+    .info-left i {
+      width: 16px;
+      text-align: center;
+      color: var(--gold);
+    }
+
+    .info-value {
+      color: #e2e8f0;
+      font-weight: 600;
+
+      text-align: right;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 65%;
+    }
+
+    /* =========================
+       STATUS BADGES
+    ========================= */
+
+    .status-badge {
+      padding: 5px 10px;
+
+      border-radius: 8px;
+
+      font-size: 11px;
+      font-weight: 800;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 4px;
+
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--gold);
+
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .status-won {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--accent-green);
+
+      border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+
+    .status-lost {
+      background: rgba(255, 77, 77, 0.15);
+      color: var(--accent-red);
+
+      border: 1px solid rgba(255, 77, 77, 0.3);
+    }
+
+    /* =========================
+       WINNER BOX
+    ========================= */
+
+    .prize-box {
+      background: rgba(0, 230, 118, 0.08);
+
+      border: 1px solid rgba(0, 230, 118, 0.2);
+
+      border-radius: 10px;
+
+      padding: 9px 11px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 10px;
+    }
+
+    .prize-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .prize-amount {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
+
+    /* =========================
+       EMPTY / LOADING
+    ========================= */
+
+    .empty-state {
+      text-align: center;
+
+      color: var(--text-muted);
+
+      padding: 45px 10px;
+
+      font-size: 14px;
+
+      background: rgba(255,255,255,0.02);
+
+      border-radius: 15px;
+
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .empty-state i {
+      display: block;
+
+      font-size: 42px;
+
+      color: rgba(255,255,255,0.18);
+
+      margin-bottom: 12px;
+    }
+
+    .loading-spinner {
+      width: 30px;
+      height: 30px;
+
+      margin: 0 auto 12px;
+
+      border: 3px solid rgba(255,255,255,0.12);
+      border-top-color: var(--gold);
+
+      border-radius: 50%;
+
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================
+       ERROR
+    ========================= */
+
+    .error-state {
+      text-align: center;
+
+      padding: 30px 15px;
+
+      background: rgba(255,77,77,0.05);
+
+      border: 1px solid rgba(255,77,77,0.15);
+
+      border-radius: 15px;
+
+      color: var(--text-muted);
+
+      font-size: 13px;
+    }
+
+    .error-state i {
+      font-size: 35px;
+      color: var(--accent-red);
+      margin-bottom: 10px;
+    }
+
+    .retry-btn {
+      margin-top: 12px;
+
+      border: none;
+
+      background: var(--gold-gradient);
+      color: #000;
+
+      padding: 8px 15px;
+
+      border-radius: 8px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 360px) {
+
+      body {
+        padding: 10px;
+      }
+
+      .page-title {
+        font-size: 14px;
+      }
+
+      .ticket-serial {
+        font-size: 14px;
+      }
+
+      .ticket-price {
+        font-size: 12px;
+      }
+
+      .tab-btn {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="main-wrapper">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+
+      <a href="index.html" class="back-btn" aria-label="Back">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+
+      <div class="page-title">
+        <i class="fa-solid fa-ticket"></i>
+        আমার সকল টিকিট
+      </div>
+
+      <div class="header-spacer"></div>
+
+    </div>
+
+
+    <!-- FILTER TABS -->
+    <div class="filter-tabs">
+
+      <button
+        class="tab-btn active"
+        data-filter="pending"
+        onclick="filterTickets('pending', this)">
+        পেন্ডিং
+      </button>
+
+      <button
+        class="tab-btn"
+        data-filter="won"
+        onclick="filterTickets('won', this)">
+        বিজয়ী
+      </button>
+
+      <button
+        class="tab-btn"
+        data-filter="lost"
+        onclick="filterTickets('lost', this)">
+        পরাজিত
+      </button>
+
+    </div>
+
+
+    <!-- TICKETS -->
+    <div id="ticketsList">
+
+      <div class="empty-state">
+
+        <div class="loading-spinner"></div>
+
+        <div>
+          টিকিট লোড হচ্ছে...
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script type="module">
+
+    /* =========================================================
+       FIREBASE
+    ========================================================= */
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      onSnapshot,
+      getDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",
+
+      authDomain:
+        "kopa-samsu-95941.firebaseapp.com",
+
+      projectId:
+        "kopa-samsu-95941",
+
+      storageBucket:
+        "kopa-samsu-95941.firebasestorage.app",
+
+      messagingSenderId:
+        "949740806870",
+
+      appId:
+        "1:949740806870:web:52e745bba2436172481f77"
+
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+
+    /* =========================================================
+       VARIABLES
+    ========================================================= */
+
+    let currentUser = null;
+
+    let allTickets = [];
+
+    let activeFilter = "pending";
+
+    let unsubscribeTickets = null;
+
+
+    /* =========================================================
+       AUTH
+    ========================================================= */
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) {
+
+        window.location.href = "login.html";
+
+        return;
+      }
+
+      currentUser = user;
+
+      fetchMyTickets(user.uid);
+
+    });
+
+
+    /* =========================================================
+       FETCH MY TICKETS
+    ========================================================= */
+
+    function fetchMyTickets(uid) {
+
+      if (unsubscribeTickets) {
+
+        unsubscribeTickets();
+
+        unsubscribeTickets = null;
+
+      }
+
+
+      const ticketsQuery = query(
+
+        collection(db, "tickets"),
+
+        where("userId", "==", uid)
+
+      );
+
+
+      unsubscribeTickets = onSnapshot(
+
+        ticketsQuery,
+
+        async (snapshot) => {
+
+          try {
+
+            const tickets = [];
+
+
+            /*
+              প্রতিটি টিকিট সরাসরি রাখা হচ্ছে।
+
+              গুরুত্বপূর্ণ:
+              এখানে slot document না থাকলেও won/lost টিকিট
+              বাদ দেওয়া হবে না।
+            */
+
+            snapshot.forEach((docSnap) => {
+
+              const data = docSnap.data();
+
+              tickets.push({
+
+                id: docSnap.id,
+
+                ...data
+
+              });
+
+            });
+
+
+            /*
+              সর্বশেষ টিকিট আগে।
+              Firestore Timestamp এবং JS Date দুটোই সাপোর্ট।
+            */
+
+            tickets.sort((a, b) => {
+
+              return getTimestampMilliseconds(b.createdAt)
+                   - getTimestampMilliseconds(a.createdAt);
+
+            });
+
+
+            allTickets = tickets;
+
+            renderTickets();
+
+          } catch (error) {
+
+            console.error(
+              "Ticket processing error:",
+              error
+            );
+
+            showError();
+
+          }
+
+        },
+
+        (error) => {
+
+          console.error(
+            "Ticket listener error:",
+            error
+          );
+
+          showError();
+
+        }
+
+      );
+
+    }
+
+
+    /* =========================================================
+       FIRESTORE TIMESTAMP HELPER
+    ========================================================= */
+
+    function getTimestampMilliseconds(timestamp) {
+
+      if (!timestamp) {
+        return 0;
+      }
+
+
+      /*
+        Firestore Timestamp
+      */
+
+      if (
+        typeof timestamp.toMillis === "function"
+      ) {
+
+        return timestamp.toMillis();
+
+      }
+
+
+      /*
+        Firestore Timestamp-এর seconds
+      */
+
+      if (
+        typeof timestamp.seconds === "number"
+      ) {
+
+        return timestamp.seconds * 1000;
+
+      }
+
+
+      /*
+        JS Date
+      */
+
+      if (
+        timestamp instanceof Date
+      ) {
+
+        return timestamp.getTime();
+
+      }
+
+
+      /*
+        Number
+      */
+
+      if (
+        typeof timestamp === "number"
+      ) {
+
+        /*
+          seconds হলে milliseconds-এ convert
+        */
+
+        if (timestamp < 10000000000) {
+
+          return timestamp * 1000;
+
+        }
+
+        return timestamp;
+
+      }
+
+
+      /*
+        String / অন্য Date-compatible value
+      */
+
+      const parsed = new Date(timestamp).getTime();
+
+      return Number.isFinite(parsed)
+        ? parsed
+        : 0;
+
+    }
+
+
+    /* =========================================================
+       DATE FORMAT
+    ========================================================= */
+
+    function formatDate(timestamp) {
+
+      const milliseconds =
+        getTimestampMilliseconds(timestamp);
+
+
+      if (!milliseconds) {
+
+        return "তারিখ পাওয়া যায়নি";
+
+      }
+
+
+      const date = new Date(milliseconds);
+
+
+      return (
+
+        date.toLocaleDateString(
+          "bn-BD",
+          {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+          }
+        )
+
+        +
+
+        " • "
+
+        +
+
+        date.toLocaleTimeString(
+          "bn-BD",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        )
+
+      );
+
+    }
+
+
+    /* =========================================================
+       STATUS NORMALIZER
+    ========================================================= */
+
+    function normalizeStatus(status) {
+
+      if (!status) {
+
+        return "pending";
+
+      }
+
+
+      const value =
+        String(status)
+          .trim()
+          .toLowerCase();
+
+
+      /*
+        active/pending দুটোই pending হিসেবে দেখানো হবে
+      */
+
+      if (
+        value === "active" ||
+        value === "pending" ||
+        value === "waiting" ||
+        value === "open"
+      ) {
+
+        return "pending";
+
+      }
+
+
+      if (
+        value === "won" ||
+        value === "winner" ||
+        value === "win"
+      ) {
+
+        return "won";
+
+      }
+
+
+      if (
+        value === "lost" ||
+        value === "loser" ||
+        value === "loss"
+      ) {
+
+        return "lost";
+
+      }
+
+
+      /*
+        অজানা status হলে pending
+      */
+
+      return "pending";
+
+    }
+
+
+    /* =========================================================
+       FILTER
+    ========================================================= */
+
+    window.filterTickets = function(filter, btn) {
+
+      activeFilter = filter;
+
+
+      document
+        .querySelectorAll(".tab-btn")
+        .forEach((button) => {
+
+          button.classList.remove("active");
+
+        });
+
+
+      if (btn) {
+
+        btn.classList.add("active");
+
+      }
+
+
+      renderTickets();
+
+    };
+
+
+    /* =========================================================
+       RENDER TICKETS
+    ========================================================= */
+
+    function renderTickets() {
+
+      const container =
+        document.getElementById("ticketsList");
+
+
+      let filteredTickets = [];
+
+
+      filteredTickets =
+        allTickets.filter((ticket) => {
+
+          const status =
+            normalizeStatus(ticket.status);
+
+
+          return status === activeFilter;
+
+        });
+
+
+      /* Empty */
+
+      if (filteredTickets.length === 0) {
+
+        let message =
+          "কোনো টিকিট পাওয়া যায়নি!";
+
+        let icon =
+          "fa-ticket-simple";
+
+
+        if (activeFilter === "pending") {
+
+          message =
+            "আপনার কোনো অপেক্ষমাণ টিকিট নেই!";
+
+        }
+
+
+        if (activeFilter === "won") {
+
+          message =
+            "আপনার কোনো বিজয়ী টিকিট নেই!";
+
+        }
+
+
+        if (activeFilter === "lost") {
+
+          message =
+            "আপনার কোনো পরাজিত টিকিট নেই!";
+
+        }
+
+
+        container.innerHTML = `
+
+          <div class="empty-state">
+
+            <i class="fa-solid ${icon}"></i>
+
+            <div>
+              ${message}
+            </div>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      let html = "";
+
+
+      filteredTickets.forEach((ticket) => {
+
+        const status =
+          normalizeStatus(ticket.status);
+
+
+        /*
+          Ticket ID
+        */
+
+        const serialCode =
+          ticket.ticketId
+          ||
+          (
+            "#KS-" +
+            String(ticket.id || "")
+              .substring(0, 8)
+              .toUpperCase()
+          );
+
+
+        /*
+          Price
+        */
+
+        const price =
+          Number(ticket.price || 0);
+
+
+        /*
+          Prize
+        */
+
+        const prize =
+          Number(
+            ticket.prizeMoney
+            ??
+            ticket.prizeAmount
+            ??
+            ticket.prize
+            ??
+            0
+          );
+
+
+        /*
+          Slot ID
+        */
+
+        const slotId =
+          ticket.slotId
+          ? String(ticket.slotId)
+          : "N/A";
+
+
+        /*
+          Date
+        */
+
+        const dateStr =
+          formatDate(ticket.createdAt);
+
+
+        /*
+          Status UI
+        */
+
+        let statusBadge = "";
+
+        let cardClass = "";
+
+
+        if (status === "won") {
+
+          cardClass = "won-card";
+
+          statusBadge = `
+
+            <span class="status-badge status-won">
+
+              <i class="fa-solid fa-trophy"></i>
+
+              বিজয়ী
+
+            </span>
+
+          `;
+
+        }
+
+        else if (status === "lost") {
+
+          cardClass = "lost-card";
+
+          statusBadge = `
+
+            <span class="status-badge status-lost">
+
+              <i class="fa-solid fa-xmark"></i>
+
+              পরাজিত
+
+            </span>
+
+          `;
+
+        }
+
+        else {
+
+          statusBadge = `
+
+            <span class="status-badge status-pending">
+
+              <i class="fa-solid fa-clock"></i>
+
+              অপেক্ষমাণ
+
+            </span>
+
+          `;
+
+        }
+
+
+        /*
+          Winner prize box
+        */
+
+        let prizeBox = "";
+
+
+        if (
+          status === "won"
+          &&
+          prize > 0
+        ) {
+
+          prizeBox = `
+
+            <div class="prize-box">
+
+              <span class="prize-label">
+
+                <i class="fa-solid fa-gift"></i>
+                পুরস্কারের পরিমাণ
+
+              </span>
+
+              <span class="prize-amount">
+
+                ৳${formatMoney(prize)}
+
+              </span>
+
+            </div>
+
+          `;
+
+        }
+
+
+        html += `
+
+          <div class="ticket-card ${cardClass}">
+
+            <div class="ticket-top">
+
+              <div
+                class="ticket-serial"
+                title="${escapeHtml(serialCode)}"
+              >
+
+                <i class="fa-solid fa-barcode"></i>
+
+                ${escapeHtml(serialCode)}
+
+              </div>
+
+
+              <div class="ticket-price">
+
+                মূল্য:
+                ৳${formatMoney(price)}
+
+              </div>
+
+            </div>
+
+
+            <div class="ticket-info-grid">
+
+
+              <div class="info-row">
+
+                <div class="info-left">
+
+                  <i class="fa-regular fa-calendar-check"></i>
+
+                  <span>
+                    কেনার সময়
+                  </span>
+
+                </div>
+
+                <div class="info-value">
+
+                  ${escapeHtml(dateStr)}
+
+                </div>
+
+              </div>
+
+
+              <div class="info-row">
+
+                <div class="info-left">
+
+                  <i class="fa-solid fa-hashtag"></i>
+
+                  <span>
+                    স্লট
+                  </span>
+
+                </div>
+
+                <div
+                  class="info-value"
+                  title="${escapeHtml(slotId)}"
+                >
+
+                  ${escapeHtml(
+                    getShortSlotId(slotId)
+                  )}
+
+                </div>
+
+              </div>
+
+
+              <div class="info-row">
+
+                <div class="info-left">
+
+                  <i class="fa-solid fa-circle-info"></i>
+
+                  <span>
+                    স্ট্যাটাস
+                  </span>
+
+                </div>
+
+                <div>
+
+                  ${statusBadge}
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+            ${prizeBox}
+
+
+          </div>
+
+        `;
+
+      });
+
+
+      container.innerHTML = html;
+
+    }
+
+
+    /* =========================================================
+       MONEY FORMAT
+    ========================================================= */
+
+    function formatMoney(amount) {
+
+      const number =
+        Number(amount || 0);
+
+
+      return number.toLocaleString(
+        "bn-BD",
+        {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       SHORT SLOT ID
+    ========================================================= */
+
+    function getShortSlotId(slotId) {
+
+      if (
+        !slotId ||
+        slotId === "N/A"
+      ) {
+
+        return "N/A";
+
+      }
+
+
+      const value =
+        String(slotId);
+
+
+      if (value.length <= 10) {
+
+        return "#" + value.toUpperCase();
+
+      }
+
+
+      return (
+
+        "#" +
+        value
+          .substring(0, 8)
+          .toUpperCase()
+
+        +
+        "..."
+
+      );
+
+    }
+
+
+    /* =========================================================
+       HTML ESCAPE
+       XSS / broken HTML protection
+    ========================================================= */
+
+    function escapeHtml(value) {
+
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================================================
+       ERROR UI
+    ========================================================= */
+
+    function showError() {
+
+      const container =
+        document.getElementById("ticketsList");
+
+
+      container.innerHTML = `
+
+        <div class="error-state">
+
+          <i class="fa-solid fa-triangle-exclamation"></i>
+
+          <div>
+            টিকিট লোড করতে সমস্যা হয়েছে।
+          </div>
+
+          <button
+            class="retry-btn"
+            onclick="retryTickets()"
+          >
+
+            <i class="fa-solid fa-rotate-right"></i>
+
+            আবার চেষ্টা করুন
+
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       RETRY
+    ========================================================= */
+
+    window.retryTickets = function() {
+
+      if (!currentUser) {
+
+        window.location.href = "login.html";
+
+        return;
+
+      }
+
+
+      const container =
+        document.getElementById("ticketsList");
+
+
+      container.innerHTML = `
+
+        <div class="empty-state">
+
+          <div class="loading-spinner"></div>
+
+          <div>
+            আবার লোড হচ্ছে...
+          </div>
+
+        </div>
+
+      `;
+
+
+      fetchMyTickets(currentUser.uid);
+
+    };
+
+
+    /* =========================================================
+       CLEANUP
+    ========================================================= */
+
+    window.addEventListener(
+      "beforeunload",
+      () => {
+
+        if (unsubscribeTickets) {
+
+          unsubscribeTickets();
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>

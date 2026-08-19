@@ -1,0 +1,2863 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>লাইভ ড্র ও রেজাল্ট - কোপা সামসু লটারি</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+
+    :root {
+      --bg-color: #07090f;
+      --card-bg: rgba(15, 20, 32, 0.95);
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      --text-muted: #94a3b8;
+      --border-color: rgba(245, 158, 11, 0.3);
+      --green: #34d399;
+      --red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Hind Siliguri', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg-color);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 18px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .back-btn {
+      color: #fff;
+      font-size: 16px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      transform: scale(0.94);
+    }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+    }
+
+    /* =========================
+       DISPLAY
+    ========================= */
+
+    .display-box {
+      background: linear-gradient(160deg, #101624, #080b12);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 22px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .slot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--gold-light);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .timer-display {
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .draw-screen {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px dashed rgba(245, 158, 11, 0.3);
+      border-radius: 14px;
+      padding: 10px;
+      min-height: 160px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* =========================
+       PODIUM
+    ========================= */
+
+    .podium-item {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      animation: popIn 0.4s ease forwards;
+      opacity: 0;
+      transform: translateY(15px);
+      overflow: hidden;
+    }
+
+    .podium-item span {
+      min-width: 0;
+    }
+
+    .podium-item span:nth-child(2) {
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .podium-item span:nth-child(3) {
+      max-width: 110px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @keyframes popIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .podium-1 {
+      background: linear-gradient(
+        135deg,
+        rgba(245, 158, 11, 0.3),
+        rgba(217, 119, 6, 0.2)
+      );
+      border: 2px solid #f59e0b;
+      color: #fbbf24;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    .podium-2 {
+      background: linear-gradient(
+        135deg,
+        rgba(148, 163, 184, 0.3),
+        rgba(100, 116, 139, 0.2)
+      );
+      border: 2px solid #cbd5e1;
+      color: #e2e8f0;
+      box-shadow: 0 0 12px rgba(203, 213, 225, 0.3);
+    }
+
+    .podium-3 {
+      background: linear-gradient(
+        135deg,
+        rgba(217, 119, 6, 0.25),
+        rgba(146, 64, 14, 0.2)
+      );
+      border: 2px solid #d97706;
+      color: #fcd34d;
+      box-shadow: 0 0 10px rgba(217, 119, 6, 0.3);
+    }
+
+    .spinner-item {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 100%;
+      opacity: 0.5;
+      padding: 0 10px;
+      text-align: center;
+    }
+
+    .winner-status {
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 700;
+      margin-top: 14px;
+      min-height: 22px;
+    }
+
+    /* =========================
+       CONGRATS
+    ========================= */
+
+    .congrats-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(7, 9, 15, 0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95);
+      transition: all 0.3s ease;
+    }
+
+    .congrats-banner.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .popup-card {
+      background: linear-gradient(145deg, #171f33, #0d121f);
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      padding: 22px;
+      width: 85%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    }
+
+    .popup-card i {
+      font-size: 45px;
+      color: var(--gold);
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+    }
+
+    .popup-card h2 {
+      color: var(--gold-light);
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .popup-card p {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       TABS
+    ========================= */
+
+    .switch-section {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      height: 320px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-headers {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--gold-gradient);
+      color: #000;
+      border-color: var(--gold);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .tab-pane {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    /* =========================
+       CHAT
+    ========================= */
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+      margin-bottom: 8px;
+    }
+
+    .chat-bubble {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .chat-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #222;
+      object-fit: cover;
+      border: 1px solid var(--gold);
+      flex-shrink: 0;
+    }
+
+    .chat-content-box {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 6px 10px;
+      border-radius: 10px;
+      max-width: 82%;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .chat-username {
+      font-size: 10px;
+      color: var(--gold-light);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .chat-text {
+      color: #e2e8f0;
+      word-break: break-word;
+    }
+
+    .chat-input-box {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .send-btn {
+      background: var(--gold-gradient);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 0 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* =========================
+       HISTORY
+    ========================= */
+
+    .history-content {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .history-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .history-card.win-card {
+      border-color: rgba(52, 211, 153, 0.5);
+      background: rgba(52, 211, 153, 0.08);
+    }
+
+    .history-card.loss-card {
+      border-color: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.03);
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .history-label {
+      color: var(--text-muted);
+    }
+
+    .history-val {
+      font-weight: 700;
+      color: #fff;
+      text-align: right;
+    }
+
+    .history-val.win {
+      color: var(--green);
+    }
+
+    .history-val.loss {
+      color: var(--red);
+    }
+
+    .history-val.badge-code {
+      color: var(--gold-light);
+      background: rgba(245, 158, 11, 0.1);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .history-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 40px;
+      font-size: 13px;
+    }
+
+    .result-waiting {
+      color: var(--gold-light);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--green);
+      margin-top: 8px;
+      opacity: .85;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <audio
+    id="cheerAudio"
+    src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"
+    preload="auto">
+  </audio>
+
+
+  <div class="main-wrapper">
+
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+      <a
+        href="index.html"
+        class="back-btn"
+        aria-label="ফিরে যান">
+
+        <i class="fa-solid fa-arrow-left"></i>
+
+      </a>
+
+
+      <div class="page-title">
+        লাইভ ড্র ও রেজাল্ট
+      </div>
+
+
+      <div style="width:36px;"></div>
+
+    </div>
+
+
+
+    <!-- DRAW DISPLAY -->
+
+    <div
+      class="display-box"
+      id="displayBox">
+
+
+      <!-- WINNER POPUP -->
+
+      <div
+        class="congrats-banner"
+        id="congratsBanner">
+
+        <div class="popup-card">
+
+          <i class="fa-solid fa-trophy"></i>
+
+          <h2>
+            অভিনন্দন! 🎉
+          </h2>
+
+          <p id="congratsText">
+            বিজয়ীর তথ্য লোড হচ্ছে...
+          </p>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- SLOT -->
+
+      <div
+        class="slot-badge"
+        id="slotNameBadge">
+
+        <i class="fa-solid fa-circle-notch fa-spin"></i>
+
+        ড্রয়ের তথ্য খোঁজা হচ্ছে...
+
+      </div>
+
+
+
+      <!-- TIMER -->
+
+      <div
+        class="timer-display"
+        id="timerDisplay">
+
+        --:--
+
+      </div>
+
+
+
+      <!-- DRAW SCREEN -->
+
+      <div
+        class="draw-screen"
+        id="drawScreen">
+
+        <div
+          id="spinnerContainer">
+
+          <div class="spinner-item">
+            অপেক্ষা করুন
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div
+        class="winner-status"
+        id="winnerStatusText">
+
+        বর্তমানে কোনো ড্র লাইভ নেই
+
+      </div>
+
+
+      
+
+    </div>
+
+
+
+    <!-- TABS -->
+
+    <div class="switch-section">
+
+
+      <div class="tab-headers">
+
+
+        <button
+          class="tab-btn active"
+          id="liveChatTabBtn">
+
+          <i class="fa-solid fa-comments"></i>
+
+          লাইভ চ্যাট
+
+        </button>
+
+
+
+        <button
+          class="tab-btn"
+          id="myHistoryTabBtn">
+
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          মাই হিস্ট্রি
+
+        </button>
+
+
+      </div>
+
+
+
+      <!-- CHAT -->
+
+      <div
+        class="tab-pane active"
+        id="liveChatPane">
+
+
+        <div
+          class="chat-messages"
+          id="chatMessagesContainer">
+        </div>
+
+
+        <div class="chat-input-box">
+
+
+          <input
+            type="text"
+            id="chatInput"
+            class="chat-input"
+            maxlength="300"
+            placeholder="আপনার মন্তব্য লিখুন...">
+
+
+          <button
+            id="sendChatBtn"
+            class="send-btn"
+            aria-label="মেসেজ পাঠান">
+
+            <i class="fa-solid fa-paper-plane"></i>
+
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- HISTORY -->
+
+      <div
+        class="tab-pane"
+        id="myHistoryPane">
+
+
+        <div
+          class="history-content"
+          id="historyContentList">
+
+          <div class="loading-text">
+            হিস্ট্রি লোড হচ্ছে...
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+
+  <script type="module">
+
+
+    /* =========================================================
+       FIREBASE
+    ========================================================= */
+
+
+    import {
+      initializeApp
+    } from
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      addDoc,
+      query,
+      orderBy,
+      onSnapshot,
+      serverTimestamp,
+      getDocs,
+      where
+    } from
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",
+
+      authDomain:
+        "kopa-samsu-95941.firebaseapp.com",
+
+      projectId:
+        "kopa-samsu-95941",
+
+      storageBucket:
+        "kopa-samsu-95941.firebasestorage.app",
+
+      messagingSenderId:
+        "949740806870",
+
+      appId:
+        "1:949740806870:web:52e745bba2436172481f77"
+
+    };
+
+
+
+    const app =
+      initializeApp(firebaseConfig);
+
+
+    const auth =
+      getAuth(app);
+
+
+    const db =
+      getFirestore(app);
+
+
+
+    /* =========================================================
+       CENTRAL DRAW DOCUMENT
+       
+       Firestore:
+       live_draw / current
+    ========================================================= */
+
+
+    const liveDrawRef =
+      doc(
+        db,
+        "live_draw",
+        "current"
+      );
+
+
+
+    /* =========================================================
+       DOM
+    ========================================================= */
+
+
+    const slotBadge =
+      document.getElementById(
+        "slotNameBadge"
+      );
+
+
+    const timerDisplay =
+      document.getElementById(
+        "timerDisplay"
+      );
+
+
+    const spinnerContainer =
+      document.getElementById(
+        "spinnerContainer"
+      );
+
+
+    const winnerStatusText =
+      document.getElementById(
+        "winnerStatusText"
+      );
+
+
+    const congratsBanner =
+      document.getElementById(
+        "congratsBanner"
+      );
+
+
+    const congratsText =
+      document.getElementById(
+        "congratsText"
+      );
+
+
+    const cheerAudio =
+      document.getElementById(
+        "cheerAudio"
+      );
+
+
+    const historyContentList =
+      document.getElementById(
+        "historyContentList"
+      );
+
+
+    const chatInput =
+      document.getElementById(
+        "chatInput"
+      );
+
+
+    const chatContainer =
+      document.getElementById(
+        "chatMessagesContainer"
+      );
+
+
+
+    /* =========================================================
+       STATE
+    ========================================================= */
+
+
+    let currentUserId = null;
+
+    let countdownInterval = null;
+
+    let chatUnsubscribe = null;
+
+    let liveDrawUnsubscribe = null;
+
+    let historyLoading = false;
+
+    let lastResultKey = "";
+
+    let currentDrawData = null;
+
+    let serverTimeOffset = 0;
+
+
+
+    /* =========================================================
+       TIMESTAMP HELPER
+    ========================================================= */
+
+
+    function getTimestampMillis(value) {
+
+      if (!value) {
+        return 0;
+      }
+
+
+      try {
+
+        if (
+          typeof value.toMillis ===
+          "function"
+        ) {
+
+          return value.toMillis();
+
+        }
+
+
+        if (
+          typeof value.toDate ===
+          "function"
+        ) {
+
+          return value
+            .toDate()
+            .getTime();
+
+        }
+
+
+        if (
+          typeof value ===
+          "number"
+        ) {
+
+          if (
+            value < 100000000000
+          ) {
+
+            return value * 1000;
+
+          }
+
+          return value;
+
+        }
+
+
+        if (
+          typeof value ===
+          "string"
+        ) {
+
+          const parsed =
+            Date.parse(value);
+
+          return Number.isNaN(parsed)
+            ? 0
+            : parsed;
+
+        }
+
+
+        if (
+          value.seconds !==
+          undefined
+        ) {
+
+          return (
+            Number(value.seconds) *
+              1000
+            +
+            Math.floor(
+              Number(
+                value.nanoseconds ||
+                0
+              ) / 1000000
+            )
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Timestamp error:",
+          error
+        );
+
+      }
+
+
+      return 0;
+
+    }
+
+
+
+    /* =========================================================
+       CLOCK
+
+       Firestore-এর drawTime কেন্দ্রীয় সময়।
+
+       Browser clock সামান্য ভুল হলেও এখানে
+       browser থেকে server offset পাওয়া গেলে
+       সেটি ব্যবহার করা হবে।
+
+       offset না থাকলে একই Firestore timestamp
+       সব ডিভাইসে ব্যবহার হবে।
+    ========================================================= */
+
+
+    function getNow() {
+
+      return (
+        Date.now() +
+        serverTimeOffset
+      );
+
+    }
+
+
+
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================= */
+
+
+    function escapeHtml(value) {
+
+      const text =
+        String(
+          value === null ||
+          value === undefined
+            ? ""
+            : value
+        );
+
+
+      const map = {
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+
+      };
+
+
+      return text.replace(
+        /[&<>"']/g,
+        char =>
+          map[char]
+      );
+
+    }
+
+
+
+    /* =========================================================
+       AUTH
+    ========================================================= */
+
+
+    onAuthStateChanged(
+      auth,
+      user => {
+
+        if (user) {
+
+          currentUserId =
+            user.uid;
+
+          loadUserHistory();
+
+        } else {
+
+          currentUserId = null;
+
+          historyContentList.innerHTML =
+            `
+              <div class="loading-text">
+                লগইন করা নেই
+              </div>
+            `;
+
+        }
+
+      }
+    );
+
+
+
+    /* =========================================================
+       TABS
+    ========================================================= */
+
+
+    const liveChatTabBtn =
+      document.getElementById(
+        "liveChatTabBtn"
+      );
+
+
+    const myHistoryTabBtn =
+      document.getElementById(
+        "myHistoryTabBtn"
+      );
+
+
+    const liveChatPane =
+      document.getElementById(
+        "liveChatPane"
+      );
+
+
+    const myHistoryPane =
+      document.getElementById(
+        "myHistoryPane"
+      );
+
+
+
+    liveChatTabBtn.addEventListener(
+      "click",
+      () => {
+
+        liveChatTabBtn
+          .classList
+          .add("active");
+
+        myHistoryTabBtn
+          .classList
+          .remove("active");
+
+        liveChatPane
+          .classList
+          .add("active");
+
+        myHistoryPane
+          .classList
+          .remove("active");
+
+      }
+    );
+
+
+
+    myHistoryTabBtn.addEventListener(
+      "click",
+      () => {
+
+        myHistoryTabBtn
+          .classList
+          .add("active");
+
+        liveChatTabBtn
+          .classList
+          .remove("active");
+
+        myHistoryPane
+          .classList
+          .add("active");
+
+        liveChatPane
+          .classList
+          .remove("active");
+
+        loadUserHistory();
+
+      }
+    );
+
+
+
+    /* =========================================================
+       LIVE DRAW LISTENER
+
+       সবচেয়ে গুরুত্বপূর্ণ অংশ।
+
+       আর কোনো Cloud Function নেই।
+
+       সবাই একই document:
+       live_draw/current
+       শুনবে।
+    ========================================================= */
+
+
+    function listenForLiveDraw() {
+
+      if (liveDrawUnsubscribe) {
+
+        liveDrawUnsubscribe();
+
+      }
+
+
+      liveDrawUnsubscribe =
+        onSnapshot(
+
+          liveDrawRef,
+
+          snapshot => {
+
+            if (!snapshot.exists()) {
+
+              resetDisplay(
+                "বর্তমানে কোনো ড্র চালু নেই"
+              );
+
+              return;
+
+            }
+
+
+            const data =
+              snapshot.data() || {};
+
+
+            currentDrawData = data;
+
+
+            processLiveDraw(
+              data
+            );
+
+          },
+
+
+          error => {
+
+            console.error(
+              "Live draw listener error:",
+              error
+            );
+
+
+            resetDisplay(
+              "লাইভ ড্র তথ্য লোড করা যাচ্ছে না"
+            );
+
+          }
+
+        );
+
+    }
+
+
+
+    /* =========================================================
+       PROCESS CENTRAL DRAW
+    ========================================================= */
+
+
+    function processLiveDraw(data) {
+
+      const slotCode =
+        data.slotCode ||
+        data.slotName ||
+        data.slotId ||
+        "N/A";
+
+
+      const status =
+        String(
+          data.status ||
+          "countdown"
+        ).toLowerCase();
+
+
+      const drawTime =
+        getTimestampMillis(
+          data.drawTime ||
+          data.scheduledDrawTime ||
+          data.drawAt
+        );
+
+
+      const winners =
+        Array.isArray(
+          data.winnersList
+        )
+          ? data.winnersList
+          : (
+              Array.isArray(
+                data.winners
+              )
+                ? data.winners
+                : []
+            );
+
+
+
+      slotBadge.innerHTML =
+        `
+          <i class="fa-solid fa-ticket"></i>
+
+          স্লট ID:
+          #${escapeHtml(slotCode)}
+        `;
+
+
+
+      /*
+        RESULT EXISTS
+      */
+
+      if (
+        winners.length > 0 &&
+        (
+          status === "completed" ||
+          status === "complete" ||
+          status === "finished" ||
+          status === "drawn" ||
+          data.resultReady === true
+        )
+      ) {
+
+        clearCountdown();
+
+        showResult(
+          winners,
+          slotCode,
+          data
+        );
+
+        return;
+
+      }
+
+
+
+      /*
+        RESULT EXISTS কিন্তু status field
+        দেওয়া হয়নি।
+      */
+
+      if (
+        winners.length > 0 &&
+        drawTime > 0 &&
+        getNow() >= drawTime
+      ) {
+
+        clearCountdown();
+
+        showResult(
+          winners,
+          slotCode,
+          data
+        );
+
+        return;
+
+      }
+
+
+
+      /*
+        DRAW TIME নেই
+      */
+
+      if (drawTime <= 0) {
+
+        clearCountdown();
+
+        timerDisplay.innerText =
+          "--:--";
+
+
+        spinnerContainer.innerHTML =
+          `
+            <div class="spinner-item">
+
+              <i class="fa-solid fa-clock"></i>
+
+              ড্রয়ের সময় নির্ধারণ করা হচ্ছে...
+
+            </div>
+          `;
+
+
+        winnerStatusText.innerText =
+          "ড্রয়ের সময় নির্ধারণ করা হয়নি";
+
+        return;
+
+      }
+
+
+
+      /*
+        COUNTDOWN
+      */
+
+      startCountdown(
+        drawTime,
+        slotCode
+      );
+
+    }
+
+
+
+    /* =========================================================
+       COUNTDOWN
+    ========================================================= */
+
+
+    function startCountdown(
+      targetTime,
+      slotCode
+    ) {
+
+      clearCountdown();
+
+
+      function update() {
+
+        const diff =
+          targetTime -
+          getNow();
+
+
+        /*
+          সময় শেষ
+        */
+
+        if (diff <= 0) {
+
+          clearCountdown();
+
+
+          timerDisplay.innerText =
+            "00:00";
+
+
+          spinnerContainer.innerHTML =
+            `
+              <div class="spinner-item">
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                ফলাফল প্রকাশের অপেক্ষায়...
+
+              </div>
+            `;
+
+
+          winnerStatusText.innerText =
+            `
+              স্লট #${escapeHtml(slotCode)}
+              — ড্র সম্পন্ন হয়েছে
+            `;
+
+
+          /*
+            এখানে কোনো random draw করা হবে না।
+
+            Admin Firestore-এ winnersList দিলেই
+            onSnapshot নিজে থেকেই result দেখাবে।
+          */
+
+          return;
+
+        }
+
+
+
+        const totalSeconds =
+          Math.floor(
+            diff / 1000
+          );
+
+
+        const hours =
+          Math.floor(
+            totalSeconds / 3600
+          );
+
+
+        const minutes =
+          Math.floor(
+            (
+              totalSeconds % 3600
+            ) / 60
+          );
+
+
+        const seconds =
+          totalSeconds % 60;
+
+
+        let text = "";
+
+
+        if (hours > 0) {
+
+          text =
+            String(hours)
+              .padStart(2, "0")
+            +
+            ":"
+            +
+            String(minutes)
+              .padStart(2, "0")
+            +
+            ":"
+            +
+            String(seconds)
+              .padStart(2, "0");
+
+        } else {
+
+          text =
+            String(minutes)
+              .padStart(2, "0")
+            +
+            ":"
+            +
+            String(seconds)
+              .padStart(2, "0");
+
+        }
+
+
+        timerDisplay.innerText =
+          text;
+
+
+        winnerStatusText.innerText =
+          `
+            স্লট #${escapeHtml(slotCode)}
+            — কাউন্টডাউন চলছে...
+          `;
+
+
+        spinnerContainer.innerHTML =
+          `
+            <div class="spinner-item">
+
+              <i class="fa-solid fa-ticket"></i>
+
+              বিজয়ী নির্বাচন হবে
+              ${text}
+              পরে
+
+            </div>
+          `;
+
+      }
+
+
+      update();
+
+
+      countdownInterval =
+        setInterval(
+          update,
+          250
+        );
+
+    }
+
+
+
+    /* =========================================================
+       CLEAR COUNTDOWN
+    ========================================================= */
+
+
+    function clearCountdown() {
+
+      if (
+        countdownInterval
+      ) {
+
+        clearInterval(
+          countdownInterval
+        );
+
+        countdownInterval = null;
+
+      }
+
+    }
+
+
+
+    /* =========================================================
+       SHOW RESULT
+
+       Firestore-এ যে result রাখা আছে
+       ঠিক সেটাই দেখাবে।
+
+       Client নিজে winner তৈরি করবে না।
+    ========================================================= */
+
+
+    function showResult(
+      winners,
+      slotCode,
+      data
+    ) {
+
+      clearCountdown();
+
+
+      timerDisplay.innerText =
+        "সম্পন্ন";
+
+
+      winnerStatusText.innerHTML =
+        `
+          স্লট #${escapeHtml(slotCode)}
+          এর ড্র সম্পন্ন হয়েছে
+        `;
+
+
+
+      spinnerContainer.innerHTML =
+        winners
+          .map(
+            (winner, index) =>
+              createPodiumItem(
+                winner,
+                index
+              )
+          )
+          .join("");
+
+
+      if (!winners.length) {
+
+        spinnerContainer.innerHTML =
+          `
+            <div class="spinner-item">
+              ফলাফল পাওয়া যায়নি
+            </div>
+          `;
+
+        return;
+
+      }
+
+
+
+      /*
+        একই result আবার snapshot এ এলে
+        popup বারবার দেখাবে না।
+      */
+
+      const resultKey =
+        JSON.stringify(
+          winners
+        );
+
+
+      if (
+        resultKey ===
+        lastResultKey
+      ) {
+
+        return;
+
+      }
+
+
+      lastResultKey =
+        resultKey;
+
+
+      const topWinner =
+        winners[0] || {};
+
+
+      const topName =
+        topWinner.name ||
+        topWinner.userName ||
+        "N/A";
+
+
+      const topNumber =
+        topWinner.number ||
+        topWinner.ticketNumber ||
+        topWinner.ticketId ||
+        "N/A";
+
+
+
+      congratsText.innerHTML =
+        `
+          স্লট ID:
+          <b>#${escapeHtml(slotCode)}</b>
+
+          <br>
+
+          ১ম বিজয়ী:
+          <b>${escapeHtml(topName)}</b>
+
+          <br>
+
+          টিকিট:
+          <b>${escapeHtml(topNumber)}</b>
+
+          <br>
+
+          ফলাফল সফলভাবে প্রকাশিত হয়েছে!
+        `;
+
+
+
+      congratsBanner
+        .classList
+        .add("active");
+
+
+      playSound();
+
+
+
+      setTimeout(
+        () => {
+
+          congratsBanner
+            .classList
+            .remove("active");
+
+        },
+        4500
+      );
+
+
+
+      /*
+        Result update হওয়ার পর history refresh
+      */
+
+      loadUserHistory();
+
+    }
+
+
+
+    /* =========================================================
+       PODIUM
+    ========================================================= */
+
+
+    function createPodiumItem(
+      winner,
+      index
+    ) {
+
+      const rankClass =
+        index === 0
+          ? "podium-1"
+          : (
+              index === 1
+                ? "podium-2"
+                : "podium-3"
+            );
+
+
+      const medalIcon =
+        index === 0
+          ? "fa-trophy"
+          : (
+              index === 1
+                ? "fa-medal"
+                : "fa-award"
+            );
+
+
+      const rank =
+        winner?.rank ||
+        winner?.position ||
+        `${index + 1}ম`;
+
+
+      const number =
+        winner?.number ||
+        winner?.ticketNumber ||
+        winner?.ticketId ||
+        "N/A";
+
+
+      const name =
+        winner?.name ||
+        winner?.userName ||
+        "ইউজার";
+
+
+      return `
+        <div
+          class="podium-item ${rankClass}"
+          style="animation-delay:${index * 0.2}s;">
+
+          <span>
+
+            <i class="fa-solid ${medalIcon}"></i>
+
+            ${escapeHtml(rank)}
+
+          </span>
+
+
+          <span>
+
+            ${escapeHtml(number)}
+
+          </span>
+
+
+          <span>
+
+            ${escapeHtml(name)}
+
+          </span>
+
+        </div>
+      `;
+
+    }
+
+
+
+    /* =========================================================
+       RESET DISPLAY
+    ========================================================= */
+
+
+    function resetDisplay(
+      message
+    ) {
+
+      clearCountdown();
+
+
+      slotBadge.innerHTML =
+        `
+          <i class="fa-solid fa-clock"></i>
+
+          ড্রয়ের অপেক্ষা
+        `;
+
+
+      timerDisplay.innerText =
+        "--:--";
+
+
+      spinnerContainer.innerHTML =
+        `
+          <div class="spinner-item">
+
+            ---
+
+          </div>
+        `;
+
+
+      winnerStatusText.innerText =
+        message ||
+        "বর্তমানে কোনো ড্র লাইভ নেই";
+
+
+      currentDrawData =
+        null;
+
+
+      lastResultKey =
+        "";
+
+    }
+
+
+
+    /* =========================================================
+       SOUND
+    ========================================================= */
+
+
+    function playSound() {
+
+      try {
+
+        cheerAudio.currentTime =
+          0;
+
+
+        const promise =
+          cheerAudio.play();
+
+
+        if (
+          promise &&
+          typeof promise.catch ===
+          "function"
+        ) {
+
+          promise.catch(
+            () => {}
+          );
+
+        }
+
+      } catch (error) {}
+
+    }
+
+
+
+    /* =========================================================
+       USER HISTORY
+    ========================================================= */
+
+
+    async function loadUserHistory() {
+
+      if (historyLoading) {
+        return;
+      }
+
+
+      if (!currentUserId) {
+
+        historyContentList.innerHTML =
+          `
+            <div class="loading-text">
+              লগইন করা নেই
+            </div>
+          `;
+
+        return;
+
+      }
+
+
+      historyLoading = true;
+
+
+      historyContentList.innerHTML =
+        `
+          <div class="loading-text">
+            তথ্য খোঁজা হচ্ছে...
+          </div>
+        `;
+
+
+      try {
+
+        const ticketQuery =
+          query(
+            collection(
+              db,
+              "tickets"
+            ),
+            where(
+              "userId",
+              "==",
+              currentUserId
+            )
+          );
+
+
+        const ticketSnap =
+          await getDocs(
+            ticketQuery
+          );
+
+
+        if (
+          ticketSnap.empty
+        ) {
+
+          historyContentList.innerHTML =
+            `
+              <div class="loading-text">
+                আপনার কোনো টিকিট নেই
+              </div>
+            `;
+
+          return;
+
+        }
+
+
+        let ticketsData = [];
+
+
+        ticketSnap.forEach(
+          ticketDoc => {
+
+            ticketsData.push({
+              id:
+                ticketDoc.id,
+              ...ticketDoc.data()
+            });
+
+          }
+        );
+
+
+        ticketsData.sort(
+          (a, b) => {
+
+            return (
+              getTimestampMillis(
+                b.createdAt
+              )
+              -
+              getTimestampMillis(
+                a.createdAt
+              )
+            );
+
+          }
+        );
+
+
+        ticketsData =
+          ticketsData.slice(
+            0,
+            10
+          );
+
+
+        let winCount = 0;
+
+        let html = "";
+
+
+        /*
+          Central result-এর winner list
+          দিয়ে winner check করা হবে।
+
+          এতে ticket status update দেরি করলেও
+          result page সঠিক winner দেখাতে পারবে।
+        */
+
+        let centralWinners = [];
+
+
+        if (
+          currentDrawData &&
+          Array.isArray(
+            currentDrawData.winnersList
+          )
+        ) {
+
+          centralWinners =
+            currentDrawData.winnersList;
+
+        }
+
+
+        for (
+          const ticket of ticketsData
+        ) {
+
+
+          const ticketNo =
+            ticket.ticketId ||
+            ticket.ticketNumber ||
+            ticket.number ||
+            "N/A";
+
+
+          const ticketString =
+            String(ticketNo);
+
+
+          const isCentralWinner =
+            centralWinners.some(
+              winner => {
+
+                const winnerNo =
+                  winner?.number ||
+                  winner?.ticketNumber ||
+                  winner?.ticketId ||
+                  "";
+
+
+                return (
+                  String(winnerNo) ===
+                  ticketString
+                );
+
+              }
+            );
+
+
+          const ticketStatus =
+            String(
+              ticket.status || ""
+            ).toLowerCase();
+
+
+          const isWin =
+            isCentralWinner ||
+            ticketStatus === "won" ||
+            ticketStatus === "win" ||
+            ticket.isWinner === true;
+
+
+          const isLoss =
+            ticketStatus === "lost";
+
+
+          if (isWin) {
+            winCount++;
+          }
+
+
+          const shortSlot =
+            ticket.slotId
+              ? String(
+                  ticket.slotId
+                )
+                  .substring(
+                    0,
+                    6
+                  )
+                  .toUpperCase()
+              : "N/A";
+
+
+          let timeFormatted = "";
+
+
+          const createdMillis =
+            getTimestampMillis(
+              ticket.createdAt
+            );
+
+
+          if (
+            createdMillis > 0
+          ) {
+
+            const dateObj =
+              new Date(
+                createdMillis
+              );
+
+
+            timeFormatted =
+              dateObj.toLocaleDateString(
+                "bn-BD",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric"
+                }
+              )
+              +
+              " "
+              +
+              dateObj.toLocaleTimeString(
+                "bn-BD",
+                {
+                  hour: "2-digit",
+                  minute: "2-digit"
+                }
+              );
+
+          }
+
+
+          let statusHtml =
+            "";
+
+
+          let cardClass =
+            "";
+
+
+          if (isWin) {
+
+            cardClass =
+              "win-card";
+
+
+            statusHtml =
+              `
+                <span class="history-val win">
+
+                  <i class="fa-solid fa-trophy"></i>
+
+                  বিজয়ী! 🎉
+
+                </span>
+              `;
+
+          } else if (isLoss) {
+
+            cardClass =
+              "loss-card";
+
+
+            statusHtml =
+              `
+                <span class="history-val loss">
+
+                  <i class="fa-solid fa-xmark"></i>
+
+                  বিজয়ী হননি
+
+                </span>
+              `;
+
+          } else {
+
+            statusHtml =
+              `
+                <span
+                  style="color:var(--gold-light);">
+
+                  <i class="fa-solid fa-hourglass-half"></i>
+
+                  ড্র অপেক্ষমাণ
+
+                </span>
+              `;
+
+          }
+
+
+
+          html += `
+            <div
+              class="history-card ${cardClass}">
+
+              <div class="history-row">
+
+                <span class="history-label">
+                  স্লট আইডি
+                </span>
+
+                <span
+                  class="history-val badge-code">
+
+                  #${escapeHtml(shortSlot)}
+
+                </span>
+
+              </div>
+
+
+              <div class="history-row">
+
+                <span class="history-label">
+                  টিকিট নম্বর
+                </span>
+
+                <span class="history-val">
+
+                  ${escapeHtml(ticketNo)}
+
+                </span>
+
+              </div>
+
+
+              <div class="history-row">
+
+                <span class="history-label">
+                  ফলাফল
+                </span>
+
+                ${statusHtml}
+
+              </div>
+
+
+              ${
+                timeFormatted
+                  ? `
+                    <div class="history-time">
+
+                      <i class="fa-regular fa-clock"></i>
+
+                      ${escapeHtml(
+                        timeFormatted
+                      )}
+
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+          `;
+
+        }
+
+
+
+        historyContentList.innerHTML =
+          `
+
+            <div style="
+              background:rgba(245,158,11,0.1);
+              border:1px solid var(--border-color);
+              border-radius:10px;
+              padding:8px 12px;
+              margin-bottom:6px;
+              text-align:center;
+              font-size:13px;
+              font-weight:700;
+              color:var(--gold-light);
+            ">
+
+              সর্বশেষ:
+              ${ticketsData.length}
+              টি টিকিট
+
+              |
+
+              মোট উইন:
+              ${winCount}
+              বার
+
+            </div>
+
+            ${html}
+
+          `;
+
+
+      } catch (error) {
+
+        console.error(
+          "History error:",
+          error
+        );
+
+
+        historyContentList.innerHTML =
+          `
+            <div style="
+              text-align:center;
+              color:#ef4444;
+              margin-top:40px;
+            ">
+
+              হিস্ট্রি লোড করতে সমস্যা হয়েছে
+
+            </div>
+          `;
+
+      } finally {
+
+        historyLoading =
+          false;
+
+      }
+
+    }
+
+
+
+    /* =========================================================
+       CHAT SEND
+    ========================================================= */
+
+
+    async function sendChatMessage() {
+
+      const msg =
+        chatInput.value.trim();
+
+
+      if (!msg) {
+        return;
+      }
+
+
+      if (!auth.currentUser) {
+
+        if (
+          typeof Swal !==
+          "undefined"
+        ) {
+
+          Swal.fire({
+
+            icon:
+              "warning",
+
+            title:
+              "লগইন করুন",
+
+            text:
+              "চ্যাট করতে আগে লগইন করুন",
+
+            confirmButtonText:
+              "ঠিক আছে"
+
+          });
+
+        }
+
+        return;
+
+      }
+
+
+      const sendButton =
+        document.getElementById(
+          "sendChatBtn"
+        );
+
+
+      if (
+        sendButton.disabled
+      ) {
+
+        return;
+
+      }
+
+
+      sendButton.disabled =
+        true;
+
+
+      try {
+
+        const userDoc =
+          await getDoc(
+            doc(
+              db,
+              "users",
+              auth.currentUser.uid
+            )
+          );
+
+
+        const userData =
+          userDoc.exists()
+            ? userDoc.data()
+            : {};
+
+
+        await addDoc(
+          collection(
+            db,
+            "live_chats"
+          ),
+          {
+
+            userId:
+              auth.currentUser.uid,
+
+            name:
+              userData.name ||
+              userData.displayName ||
+              "ইউজার",
+
+            photo:
+              userData.photoUrl ||
+              userData.photo ||
+              "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+
+            message:
+              msg.substring(
+                0,
+                300
+              ),
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        chatInput.value =
+          "";
+
+      } catch (error) {
+
+        console.error(
+          "Chat send error:",
+          error
+        );
+
+
+        if (
+          typeof Swal !==
+          "undefined"
+        ) {
+
+          Swal.fire({
+
+            icon:
+              "error",
+
+            title:
+              "সমস্যা হয়েছে",
+
+            text:
+              "মেসেজ পাঠানো যায়নি",
+
+            confirmButtonText:
+              "ঠিক আছে"
+
+          });
+
+        }
+
+      } finally {
+
+        sendButton.disabled =
+          false;
+
+      }
+
+    }
+
+
+
+    document
+      .getElementById(
+        "sendChatBtn"
+      )
+      .addEventListener(
+        "click",
+        sendChatMessage
+      );
+
+
+
+    chatInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key ===
+            "Enter" &&
+          !event.shiftKey
+        ) {
+
+          event.preventDefault();
+
+          sendChatMessage();
+
+        }
+
+      }
+    );
+
+
+
+    /* =========================================================
+       CHAT LISTENER
+    ========================================================= */
+
+
+    function listenForChat() {
+
+      if (chatUnsubscribe) {
+
+        chatUnsubscribe();
+
+      }
+
+
+      const chatQuery =
+        query(
+          collection(
+            db,
+            "live_chats"
+          ),
+          orderBy(
+            "createdAt",
+            "asc"
+          )
+        );
+
+
+      chatUnsubscribe =
+        onSnapshot(
+
+          chatQuery,
+
+          snapshot => {
+
+            let html = "";
+
+
+            snapshot.forEach(
+              chatDoc => {
+
+                const chat =
+                  chatDoc.data() ||
+                  {};
+
+
+                const photo =
+                  chat.photo ||
+                  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+
+                html += `
+
+                  <div
+                    class="chat-bubble">
+
+                    <img
+                      src="${escapeHtml(photo)}"
+                      class="chat-avatar"
+                      alt="avatar"
+                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png';">
+
+
+                    <div
+                      class="chat-content-box">
+
+                      <div
+                        class="chat-username">
+
+                        ${escapeHtml(
+                          chat.name ||
+                          "ইউজার"
+                        )}
+
+                      </div>
+
+
+                      <div
+                        class="chat-text">
+
+                        ${escapeHtml(
+                          chat.message ||
+                          ""
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            );
+
+
+            if (!html) {
+
+              html =
+                `
+                  <div
+                    class="loading-text">
+
+                    এখনো কোনো মন্তব্য নেই
+
+                  </div>
+                `;
+
+            }
+
+
+            chatContainer.innerHTML =
+              html;
+
+
+            chatContainer.scrollTop =
+              chatContainer.scrollHeight;
+
+          },
+
+
+          error => {
+
+            console.error(
+              "Chat snapshot error:",
+              error
+            );
+
+
+            chatContainer.innerHTML =
+              `
+                <div
+                  class="loading-text">
+
+                  চ্যাট লোড করা যাচ্ছে না
+
+                </div>
+              `;
+
+          }
+
+        );
+
+    }
+
+
+
+    /* =========================================================
+       START
+    ========================================================= */
+
+
+    function startPage() {
+
+      listenForLiveDraw();
+
+      listenForChat();
+
+    }
+
+
+
+    if (
+      document.readyState ===
+      "loading"
+    ) {
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        startPage,
+        {
+          once: true
+        }
+      );
+
+    } else {
+
+      startPage();
+
+    }
+
+
+
+    /* =========================================================
+       CLEANUP
+    ========================================================= */
+
+
+    window.addEventListener(
+      "beforeunload",
+      () => {
+
+        clearCountdown();
+
+
+        if (
+          liveDrawUnsubscribe
+        ) {
+
+          liveDrawUnsubscribe();
+
+        }
+
+
+        if (
+          chatUnsubscribe
+        ) {
+
+          chatUnsubscribe();
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>

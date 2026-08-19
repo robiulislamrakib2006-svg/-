@@ -1,0 +1,3431 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>কোপা সামসু লটারি</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+:root{
+  --bg:#07090e;
+  --card:rgba(18,22,36,.92);
+  --card2:rgba(24,29,46,.95);
+  --gold:#ffd700;
+  --orange:#ff8c00;
+  --green:#00e676;
+  --red:#ff4d4d;
+  --muted:#a0aec0;
+  --border:rgba(255,215,0,.22);
+  --goldGradient:linear-gradient(135deg,#ffd700,#ff8c00);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:'Hind Siliguri',sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,215,0,.07),transparent 28%),
+    radial-gradient(circle at 80% 90%,rgba(0,230,118,.05),transparent 30%),
+    var(--bg);
+  color:#fff;
+  overflow-x:hidden;
+}
+
+button,
+input{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+/* =========================
+   GLOBAL
+========================= */
+
+.page{
+  width:100%;
+  min-height:100vh;
+  display:none;
+}
+
+.page.active{
+  display:block;
+  animation:pageIn .3s ease;
+}
+
+@keyframes pageIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.container{
+  width:100%;
+  max-width:480px;
+  margin:auto;
+  padding:14px 14px 40px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  backdrop-filter:blur(18px);
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+#authPage{
+  position:relative;
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  overflow:hidden;
+}
+
+#authPage.active{
+  display:flex;
+}
+
+#bgCanvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.auth-card{
+  position:relative;
+  z-index:5;
+  width:100%;
+  max-width:440px;
+  padding:32px 26px;
+  border-radius:25px;
+  background:rgba(18,22,36,.78);
+  border:1px solid rgba(255,215,0,.28);
+  backdrop-filter:blur(22px);
+  box-shadow:
+    0 0 45px rgba(255,215,0,.12),
+    0 20px 60px rgba(0,0,0,.8);
+  overflow:hidden;
+}
+
+.auth-card:before{
+  content:"";
+  position:absolute;
+  width:220%;
+  height:220%;
+  top:-60%;
+  left:-60%;
+  background:conic-gradient(
+    transparent,
+    rgba(255,215,0,.25),
+    transparent 30%
+  );
+  animation:rotate 7s linear infinite;
+  z-index:-2;
+}
+
+.auth-card:after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:23px;
+  background:rgba(12,15,24,.94);
+  z-index:-1;
+}
+
+@keyframes rotate{
+  to{transform:rotate(360deg);}
+}
+
+.logo{
+  text-align:center;
+  margin-bottom:26px;
+}
+
+.logo-shape{
+  display:inline-block;
+  padding:15px 25px;
+  border:2px solid var(--gold);
+  border-radius:50px 12px 50px 12px;
+  background:linear-gradient(145deg,#172018,#0c111a);
+  box-shadow:
+    0 0 22px rgba(255,215,0,.25),
+    inset 0 0 15px rgba(0,255,136,.15);
+}
+
+.logo-title{
+  font-size:25px;
+  font-weight:800;
+  background:linear-gradient(180deg,#7ef000,#00e676);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.logo-title span{
+  display:block;
+  font-size:34px;
+  font-weight:900;
+  background:linear-gradient(180deg,#fff,#ffd700,#ff8c00);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.logo p{
+  margin-top:12px;
+  color:#cbd5e1;
+  font-size:13px;
+}
+
+.form-box{
+  display:none;
+}
+
+.form-box.active{
+  display:block;
+  animation:slideUp .35s ease;
+}
+
+@keyframes slideUp{
+  from{
+    opacity:0;
+    transform:translateY(15px);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+.input-group{
+  position:relative;
+  margin-bottom:16px;
+}
+
+.input-icon{
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--gold);
+}
+
+.input-group input{
+  width:100%;
+  padding:14px 45px 14px 45px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  outline:none;
+  font-size:15px;
+}
+
+.input-group input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 15px rgba(255,215,0,.18);
+}
+
+.toggle-pass{
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+}
+
+.submit-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:var(--goldGradient);
+  color:#000;
+  font-size:16px;
+  font-weight:900;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 7px 22px rgba(255,215,0,.25);
+}
+
+.links{
+  margin-top:19px;
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.links p+p{
+  margin-top:10px;
+}
+
+.links a{
+  color:var(--gold);
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+#dashboardPage{
+  padding-top:0;
+}
+
+.dashboard-container{
+  width:100%;
+  max-width:480px;
+  margin:auto;
+  padding:14px 14px 40px;
+}
+
+.header-card{
+  padding:15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.profile-link{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.avatar{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--gold);
+  box-shadow:0 0 14px rgba(255,215,0,.25);
+  flex-shrink:0;
+}
+
+.user-info{
+  min-width:0;
+}
+
+.user-name{
+  font-size:17px;
+  font-weight:900;
+  margin-bottom:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.user-contact{
+  color:var(--muted);
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.user-contact i{
+  color:var(--gold);
+  width:12px;
+}
+
+.profile-open{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  background:rgba(255,215,0,.08);
+  border:1px solid rgba(255,215,0,.18);
+  color:var(--gold);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* balance */
+
+.balance-card{
+  padding:22px 18px;
+  text-align:center;
+  border:1px solid var(--gold);
+  border-radius:21px;
+  background:
+    linear-gradient(135deg,
+      rgba(35,40,65,.98),
+      rgba(10,13,22,.98));
+  box-shadow:0 10px 30px rgba(0,0,0,.55);
+  margin-bottom:15px;
+}
+
+.balance-title{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:600;
+}
+
+.balance{
+  font-size:35px;
+  font-weight:900;
+  color:var(--gold);
+  text-shadow:0 0 18px rgba(255,215,0,.25);
+  margin:2px 0 16px;
+}
+
+.balance-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.action-btn{
+  padding:12px;
+  border-radius:12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+  font-size:14px;
+  font-weight:800;
+}
+
+.deposit{
+  background:var(--goldGradient);
+  color:#000;
+}
+
+.withdraw{
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+}
+
+/* buy */
+
+.buy-card{
+  padding:16px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border:1px solid var(--green);
+  border-radius:18px;
+  background:linear-gradient(
+    135deg,
+    rgba(0,230,118,.18),
+    rgba(18,22,36,.95)
+  );
+  margin-bottom:15px;
+}
+
+.buy-left{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.buy-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:rgba(0,230,118,.14);
+  color:var(--green);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+}
+
+.buy-title{
+  font-size:16px;
+  font-weight:900;
+}
+
+.buy-sub{
+  font-size:11px;
+  color:rgba(255,255,255,.65);
+}
+
+/* live */
+
+.live-card{
+  padding:15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border:1px solid rgba(255,77,77,.35);
+  border-radius:18px;
+  background:linear-gradient(
+    135deg,
+    rgba(255,77,77,.13),
+    rgba(18,22,36,.95)
+  );
+  margin-bottom:15px;
+}
+
+.live-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.live-badge{
+  background:var(--red);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  padding:4px 8px;
+  border-radius:6px;
+}
+
+.live-title{
+  font-size:11px;
+  color:#ffb3b3;
+}
+
+.timer{
+  font-size:15px;
+  font-weight:900;
+  font-family:monospace;
+}
+
+.live-button{
+  background:var(--red);
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:800;
+}
+
+/* ticket */
+
+.ticket-card{
+  padding:15px;
+  margin-bottom:15px;
+}
+
+.ticket-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.ticket-label{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.ticket-id{
+  color:var(--gold);
+  font-size:14px;
+  font-weight:900;
+  margin-top:2px;
+}
+
+.status{
+  padding:4px 9px;
+  border-radius:10px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.pending{
+  background:rgba(255,215,0,.14);
+  color:var(--gold);
+}
+
+.lost{
+  background:rgba(255,77,77,.14);
+  color:var(--red);
+}
+
+/* menu */
+
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  margin-bottom:15px;
+}
+
+.menu-item{
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-radius:14px;
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.05);
+  font-size:14px;
+  font-weight:700;
+}
+
+.menu-item-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.menu-icon{
+  width:23px;
+  text-align:center;
+  color:var(--gold);
+}
+
+.logout{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  background:linear-gradient(135deg,#ff4d4d,#d32f2f);
+  font-size:15px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-container{
+  width:100%;
+  max-width:480px;
+  margin:auto;
+  padding:14px 14px 40px;
+}
+
+.topbar{
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.back-btn{
+  border:none;
+  background:transparent;
+  color:var(--gold);
+  font-size:15px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.page-title{
+  font-size:16px;
+  font-weight:900;
+}
+
+.profile-card{
+  padding:20px;
+}
+
+.profile-pic-area{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.current-avatar{
+  width:86px;
+  height:86px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid var(--gold);
+  box-shadow:0 0 18px rgba(255,215,0,.35);
+  margin-bottom:10px;
+}
+
+.avatar-label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:12px;
+}
+
+.avatar-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:9px;
+}
+
+.avatar-option{
+  aspect-ratio:1;
+  padding:2px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.08);
+  background:#171c2a;
+  overflow:hidden;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.avatar-option img{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.avatar-option.selected{
+  border-color:var(--gold);
+  transform:scale(1.08);
+  box-shadow:0 0 13px rgba(255,215,0,.5);
+}
+
+.form-group{
+  margin-bottom:14px;
+}
+
+.label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.profile-input{
+  width:100%;
+  padding:12px 14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  color:#fff;
+  outline:none;
+  font-size:14px;
+}
+
+.profile-input:focus{
+  border-color:var(--gold);
+}
+
+.divider{
+  border:0;
+  border-top:1px dashed rgba(255,255,255,.1);
+  margin:20px 0;
+}
+
+.password-title{
+  color:var(--gold);
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:12px;
+}
+
+.update-btn{
+  width:100%;
+  border:none;
+  padding:14px;
+  border-radius:12px;
+  background:var(--goldGradient);
+  color:#000;
+  font-size:15px;
+  font-weight:900;
+  margin-top:8px;
+}
+
+.profile-logout{
+  width:100%;
+  margin-top:12px;
+  padding:13px;
+  border-radius:12px;
+  background:rgba(255,77,77,.12);
+  border:1px solid rgba(255,77,77,.35);
+  color:var(--red);
+  font-size:14px;
+  font-weight:900;
+}
+
+/* =========================
+   POPUP
+========================= */
+
+.popup-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(8px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:99999;
+  opacity:0;
+  visibility:hidden;
+  transition:.25s;
+}
+
+.popup-overlay.active{
+  opacity:1;
+  visibility:visible;
+}
+
+.popup{
+  width:100%;
+  max-width:400px;
+  background:#121624;
+  border:1px solid var(--gold);
+  border-radius:20px;
+  padding:20px;
+  text-align:center;
+  position:relative;
+  box-shadow:0 15px 40px rgba(0,0,0,.8);
+}
+
+.popup-close{
+  position:absolute;
+  right:14px;
+  top:8px;
+  color:var(--muted);
+  font-size:22px;
+  cursor:pointer;
+}
+
+.popup-img{
+  width:100%;
+  max-height:180px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:12px;
+  display:none;
+}
+
+.popup-title{
+  color:var(--gold);
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.popup-message{
+  color:#e2e8f0;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+
+.popup-btn{
+  display:block;
+  width:100%;
+  border:none;
+  padding:11px;
+  border-radius:10px;
+  background:var(--goldGradient);
+  color:#000;
+  font-weight:900;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:380px){
+
+  .auth-card{
+    padding:26px 20px;
+  }
+
+  .logo-title{
+    font-size:22px;
+  }
+
+  .logo-title span{
+    font-size:30px;
+  }
+
+  .avatar{
+    width:48px;
+    height:48px;
+  }
+
+  .user-name{
+    font-size:15px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     LOGIN / REGISTER / FORGOT
+===================================================== -->
+
+<section id="authPage" class="page">
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="auth-card">
+
+  <div class="logo">
+    <div class="logo-shape">
+      <div class="logo-title">
+        কে হবে
+        <span>কোটিপতি⁉️</span>
+      </div>
+    </div>
+
+    <p><b>বউয়ের দোয়া লটারি সেন্টার 😉</b></p>
+  </div>
+
+  <!-- LOGIN -->
+
+  <div id="loginForm" class="form-box active">
+
+    <div class="input-group">
+      <i class="fa-solid fa-envelope input-icon"></i>
+      <input type="email" id="loginEmail" placeholder="ইমেইল অ্যাড্রেস">
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-lock input-icon"></i>
+      <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড">
+      <i class="fa-solid fa-eye toggle-pass"
+         onclick="togglePassword('loginPassword',this)"></i>
+    </div>
+
+    <button class="submit-btn" id="btnLogin">
+      লগইন করুন
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+
+    <div class="links">
+      <p>
+        <a onclick="switchForm('forgotForm')">
+          পাসওয়ার্ড ভুলে গেছেন?
+        </a>
+      </p>
+
+      <p>
+        অ্যাকাউন্ট নেই?
+        <a onclick="switchForm('signupForm')">
+          নতুন রেজিস্টার করুন
+        </a>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- SIGNUP -->
+
+  <div id="signupForm" class="form-box">
+
+    <div class="input-group">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input type="text" id="signupName" placeholder="আপনার পুরো নাম">
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-phone input-icon"></i>
+      <input type="tel" id="signupPhone"
+             placeholder="মোবাইল নম্বর">
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-envelope input-icon"></i>
+      <input type="email" id="signupEmail"
+             placeholder="ইমেইল অ্যাড্রেস">
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-lock input-icon"></i>
+      <input type="password" id="signupPassword"
+             placeholder="পাসওয়ার্ড (নূন্যতম ৬ অক্ষর)">
+      <i class="fa-solid fa-eye toggle-pass"
+         onclick="togglePassword('signupPassword',this)"></i>
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-user-plus input-icon"></i>
+      <input type="text" id="signupReferCode"
+             placeholder="রেফার কোড / মোবাইল নম্বর (ঐচ্ছিক)">
+    </div>
+
+    <button class="submit-btn" id="btnSignup">
+      অ্যাকাউন্ট খুলুন
+      <i class="fa-solid fa-user-plus"></i>
+    </button>
+
+    <div class="links">
+      ইতিমধ্যে অ্যাকাউন্ট আছে?
+      <a onclick="switchForm('loginForm')">
+        লগইন করুন
+      </a>
+    </div>
+
+  </div>
+
+  <!-- FORGOT -->
+
+  <div id="forgotForm" class="form-box">
+
+    <p style="
+      color:#a0aec0;
+      font-size:13px;
+      text-align:center;
+      line-height:1.5;
+      margin-bottom:18px;
+    ">
+      আপনার রেজিস্টার্ড ইমেইলটি লিখুন।
+      পাসওয়ার্ড রিসেট করার লিংক পাঠানো হবে।
+    </p>
+
+    <div class="input-group">
+      <i class="fa-solid fa-envelope input-icon"></i>
+      <input type="email"
+             id="forgotEmail"
+             placeholder="আপনার ইমেইল">
+    </div>
+
+    <button class="submit-btn" id="btnForgot">
+      রিসেট লিংক পাঠান
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+
+    <div class="links">
+      <a onclick="switchForm('loginForm')">
+        লগইন পেজে ফিরে যান
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section id="dashboardPage" class="page">
+
+<div class="dashboard-container">
+
+  <!-- HEADER -->
+
+  <div class="header-card card">
+
+    <div class="profile-link" id="openProfile">
+
+      <img
+        id="userAvatar"
+        class="avatar"
+        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+      >
+
+      <div class="user-info">
+
+        <div class="user-name" id="userName">
+          ব্যবহারকারীর নাম
+        </div>
+
+        <div class="user-contact" id="userPhone">
+          <i class="fa-solid fa-phone"></i>
+          লোড হচ্ছে...
+        </div>
+
+        <div class="user-contact" id="userEmail">
+          <i class="fa-solid fa-envelope"></i>
+          লোড হচ্ছে...
+        </div>
+
+      </div>
+
+    </div>
+
+    <button class="profile-open" id="profileButton">
+      <i class="fa-solid fa-user-gear"></i>
+    </button>
+
+  </div>
+
+
+  <!-- BALANCE -->
+
+  <div class="balance-card">
+
+    <div class="balance-title">
+      মোট ব্যালেন্স
+    </div>
+
+    <div class="balance">
+      ৳ <span id="userBalance">0.00</span>
+    </div>
+
+    <div class="balance-actions">
+
+      <a href="deposit.html"
+         class="action-btn deposit">
+        <i class="fa-solid fa-plus-circle"></i>
+        ডিপোজিট
+      </a>
+
+      <a href="withdraw.html"
+         class="action-btn withdraw">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+        টাকা তুলুন
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- BUY TICKET -->
+
+  <a href="buy-ticket.html" class="buy-card">
+
+    <div class="buy-left">
+
+      <div class="buy-icon">
+        <i class="fa-solid fa-ticket"></i>
+      </div>
+
+      <div>
+        <div class="buy-title">
+          টিকিট কিনুন
+        </div>
+
+        <div class="buy-sub">
+          আজকের ড্র-তে অংশ নিন
+        </div>
+      </div>
+
+    </div>
+
+    <i class="fa-solid fa-chevron-right"
+       style="color:var(--green)">
+    </i>
+
+  </a>
+
+
+  <!-- LIVE DRAW -->
+
+  <div class="live-card">
+
+    <div class="live-left">
+
+      <span class="live-badge" id="liveBadge">
+        LIVE
+      </span>
+
+      <div>
+
+        <div class="live-title"
+             id="activeSlotTitle">
+          স্লট ড্র কাউন্টডাউন:
+        </div>
+
+        <div class="timer"
+             id="drawTimer">
+          লোড হচ্ছে...
+        </div>
+
+      </div>
+
+    </div>
+
+    <a href="live.html"
+       class="live-button">
+      লাইভ রেজাল্ট
+    </a>
+
+  </div>
+
+
+  <!-- TICKET STATUS -->
+
+  <div class="ticket-card card">
+
+    <div class="ticket-header">
+
+      <div>
+
+        <div class="ticket-label"
+             id="ticketLabel">
+          স্লট টিকিটসমূহ:
+        </div>
+
+        <div class="ticket-id"
+             id="ticketId">
+          লোড হচ্ছে...
+        </div>
+
+      </div>
+
+      <span class="status pending"
+            id="ticketStatus">
+        -
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- MENU -->
+
+  <div class="menu">
+
+    <a href="my-tickets.html"
+       class="menu-item">
+
+      <div class="menu-item-left">
+        <i class="fa-solid fa-ticket menu-icon"></i>
+        আমার সব টিকিট
+      </div>
+
+      <i class="fa-solid fa-angle-right"></i>
+
+    </a>
+
+
+    <a href="leaderboard.html"
+       class="menu-item">
+
+      <div class="menu-item-left">
+        <i class="fa-solid fa-trophy menu-icon"></i>
+        লিডারবোর্ড
+      </div>
+
+      <i class="fa-solid fa-angle-right"></i>
+
+    </a>
+
+
+    <a href="refer.html"
+       class="menu-item">
+
+      <div class="menu-item-left">
+        <i class="fa-solid fa-users menu-icon"></i>
+        রেফার করুন
+      </div>
+
+      <i class="fa-solid fa-angle-right"></i>
+
+    </a>
+
+
+    <a href="help.html"
+       class="menu-item">
+
+      <div class="menu-item-left">
+        <i class="fa-solid fa-headset menu-icon"></i>
+        হেল্প সেন্টার
+      </div>
+
+      <i class="fa-solid fa-angle-right"></i>
+
+    </a>
+
+  </div>
+
+
+  <!-- LOGOUT -->
+
+  <button class="logout"
+          id="dashboardLogout">
+
+    <i class="fa-solid fa-power-off"></i>
+    লগআউট
+
+  </button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     PROFILE
+===================================================== -->
+
+<section id="profilePage" class="page">
+
+<div class="profile-container">
+
+  <div class="topbar card">
+
+    <button class="back-btn"
+            id="profileBack">
+
+      <i class="fa-solid fa-arrow-left"></i>
+      ড্যাশবোর্ড
+
+    </button>
+
+    <div class="page-title">
+      প্রোফাইল সেটিংস
+    </div>
+
+    <div style="width:85px;"></div>
+
+  </div>
+
+
+  <div class="profile-card card">
+
+    <form id="profileForm">
+
+      <!-- AVATAR -->
+
+      <div class="profile-pic-area">
+
+        <img
+          id="selectedAvatar"
+          class="current-avatar"
+          src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+        >
+
+        <div class="avatar-label">
+          নিচের যেকোনো একটি অবতার সিলেক্ট করুন
+        </div>
+
+        <div class="avatar-grid" id="avatarGrid">
+
+          <div class="avatar-option selected"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Zack">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Zack">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Mimi">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mimi">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Leo">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Leo">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Sasha">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sasha">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Chloe">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Chloe">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Sam">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sam">
+          </div>
+
+          <div class="avatar-option"
+               data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- NAME -->
+
+      <div class="form-group">
+
+        <label class="label">
+          আপনার নাম
+        </label>
+
+        <input
+          type="text"
+          id="nameInput"
+          class="profile-input"
+          placeholder="নাম লিখুন"
+          required
+        >
+
+      </div>
+
+
+      <!-- PHONE -->
+
+      <div class="form-group">
+
+        <label class="label">
+          ফোন নম্বর
+        </label>
+
+        <input
+          type="text"
+          id="phoneInput"
+          class="profile-input"
+          placeholder="ফোন নম্বর"
+          required
+        >
+
+      </div>
+
+
+      <hr class="divider">
+
+
+      <!-- PASSWORD -->
+
+      <div class="password-title">
+        <i class="fa-solid fa-lock"></i>
+        পাসওয়ার্ড পরিবর্তন (ঐচ্ছিক)
+      </div>
+
+
+      <div class="form-group">
+
+        <label class="label">
+          পুরানো পাসওয়ার্ড
+        </label>
+
+        <input
+          type="password"
+          id="oldPassword"
+          class="profile-input"
+          placeholder="বর্তমান পাসওয়ার্ড দিন"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label class="label">
+          নতুন পাসওয়ার্ড
+        </label>
+
+        <input
+          type="password"
+          id="newPassword"
+          class="profile-input"
+          placeholder="নতুন পাসওয়ার্ড দিন"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label class="label">
+          কনফার্ম নতুন পাসওয়ার্ড
+        </label>
+
+        <input
+          type="password"
+          id="confirmPassword"
+          class="profile-input"
+          placeholder="পুনরায় নতুন পাসওয়ার্ড দিন"
+        >
+
+      </div>
+
+
+      <button type="submit"
+              class="update-btn">
+
+        <i class="fa-solid fa-floppy-disk"></i>
+        প্রোফাইল আপডেট করুন
+
+      </button>
+
+    </form>
+
+
+    <button class="profile-logout"
+            id="profileLogout">
+
+      <i class="fa-solid fa-right-from-bracket"></i>
+      অ্যাকাউন্ট থেকে লগআউট করুন
+
+    </button>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     POPUP
+===================================================== -->
+
+<div class="popup-overlay" id="popupOverlay">
+
+  <div class="popup">
+
+    <span class="popup-close"
+          id="popupClose">
+      &times;
+    </span>
+
+    <img class="popup-img"
+         id="popupImg">
+
+    <div class="popup-title"
+         id="popupTitle">
+      ঘোষণা
+    </div>
+
+    <div class="popup-message"
+         id="popupMessage">
+    </div>
+
+    <button class="popup-btn"
+            id="popupButton">
+      ঠিক আছে
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+function togglePassword(id,icon){
+
+  const input=document.getElementById(id);
+
+  if(input.type==="password"){
+
+    input.type="text";
+
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+
+  }else{
+
+    input.type="password";
+
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+
+  }
+
+}
+
+function switchForm(id){
+
+  document.querySelectorAll(".form-box")
+    .forEach(x=>x.classList.remove("active"));
+
+  document.getElementById(id)
+    .classList.add("active");
+
+}
+
+</script>
+
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+  signOut,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  updateDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  limit
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+const firebaseConfig={
+
+  apiKey:"AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",
+
+  authDomain:"kopa-samsu-95941.firebaseapp.com",
+
+  projectId:"kopa-samsu-95941",
+
+  storageBucket:"kopa-samsu-95941.firebasestorage.app",
+
+  messagingSenderId:"949740806870",
+
+  appId:"1:949740806870:web:52e745bba2436172481f77"
+
+};
+
+const app=initializeApp(firebaseConfig);
+
+const auth=getAuth(app);
+
+const db=getFirestore(app);
+
+
+/* =====================================================
+   PAGE SYSTEM
+===================================================== */
+
+const authPage=document.getElementById("authPage");
+const dashboardPage=document.getElementById("dashboardPage");
+const profilePage=document.getElementById("profilePage");
+
+let currentView="dashboard";
+let countdownInterval=null;
+
+
+function showPage(page){
+
+  [authPage,dashboardPage,profilePage]
+    .forEach(p=>p.classList.remove("active"));
+
+  page.classList.add("active");
+
+}
+
+
+function showDashboard(push=true){
+
+  showPage(dashboardPage);
+
+  currentView="dashboard";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  if(push && location.hash!=="#dashboard"){
+
+    history.pushState(
+      {view:"dashboard"},
+      "",
+      "#dashboard"
+    );
+
+  }
+
+}
+
+
+function showProfile(push=true){
+
+  showPage(profilePage);
+
+  currentView="profile";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  if(push && location.hash!=="#profile"){
+
+    history.pushState(
+      {view:"profile"},
+      "",
+      "#profile"
+    );
+
+  }
+
+}
+
+
+/* Browser Back */
+
+window.addEventListener("popstate",()=>{
+
+  if(!auth.currentUser){
+
+    showPage(authPage);
+
+    return;
+
+  }
+
+  if(location.hash==="#profile"){
+
+    showProfile(false);
+
+  }else{
+
+    showDashboard(false);
+
+  }
+
+});
+
+
+/* =====================================================
+   PARTICLES
+===================================================== */
+
+const canvas=document.getElementById("bgCanvas");
+
+if(canvas){
+
+  const ctx=canvas.getContext("2d");
+
+  let particles=[];
+
+  function resizeCanvas(){
+
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+
+  }
+
+  resizeCanvas();
+
+  window.addEventListener(
+    "resize",
+    resizeCanvas
+  );
+
+
+  class Particle{
+
+    constructor(){
+      this.reset();
+    }
+
+    reset(){
+
+      this.x=Math.random()*canvas.width;
+      this.y=Math.random()*canvas.height;
+
+      this.size=Math.random()*3+1;
+
+      this.speedY=Math.random()*-1-.2;
+
+      this.opacity=Math.random()*.6+.2;
+
+    }
+
+    update(){
+
+      this.y+=this.speedY;
+
+      if(this.y<0){
+
+        this.x=Math.random()*canvas.width;
+        this.y=canvas.height;
+
+      }
+
+    }
+
+    draw(){
+
+      ctx.fillStyle=
+        `rgba(255,215,0,${this.opacity})`;
+
+      ctx.beginPath();
+
+      ctx.arc(
+        this.x,
+        this.y,
+        this.size,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+    }
+
+  }
+
+
+  for(let i=0;i<50;i++){
+
+    particles.push(
+      new Particle()
+    );
+
+  }
+
+
+  function animate(){
+
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    particles.forEach(p=>{
+
+      p.update();
+      p.draw();
+
+    });
+
+    requestAnimationFrame(animate);
+
+  }
+
+  animate();
+
+}
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+onAuthStateChanged(auth,async user=>{
+
+  if(user){
+
+    const userRef=doc(
+      db,
+      "users",
+      user.uid
+    );
+
+    const snap=await getDoc(userRef);
+
+    if(!snap.exists()){
+
+      await signOut(auth);
+
+      showPage(authPage);
+
+      Swal.fire({
+        icon:"error",
+        title:"অ্যাকাউন্ট ডিলিট করা হয়েছে!",
+        text:"আপনার অ্যাকাউন্টটি প্রশাসক কর্তৃক মুছে ফেলা হয়েছে।"
+      });
+
+      return;
+
+    }
+
+
+    const data=snap.data();
+
+    if(data.isBanned===true){
+
+      await signOut(auth);
+
+      showPage(authPage);
+
+      Swal.fire({
+        icon:"error",
+        title:"অ্যাকাউন্ট ব্যান করা হয়েছে!",
+        text:"আপনার অ্যাকাউন্টটি স্থগিত বা ব্যান করা হয়েছে।"
+      });
+
+      return;
+
+    }
+
+
+    /* Dashboard */
+
+    loadUserRealtime(user);
+
+    loadTickets(user);
+
+    loadSlots();
+
+    loadPopup();
+
+
+    if(location.hash==="#profile"){
+
+      showProfile(false);
+
+    }else{
+
+      history.replaceState(
+        {view:"dashboard"},
+        "",
+        "#dashboard"
+      );
+
+      showDashboard(false);
+
+    }
+
+  }else{
+
+    showPage(authPage);
+
+    history.replaceState(
+      {view:"login"},
+      "",
+      location.pathname
+    );
+
+  }
+
+});
+
+
+/* =====================================================
+   USER REALTIME
+===================================================== */
+
+function loadUserRealtime(user){
+
+  onSnapshot(
+    doc(db,"users",user.uid),
+    snap=>{
+
+      if(!snap.exists()){
+
+        signOut(auth);
+
+        return;
+
+      }
+
+      const data=snap.data();
+
+
+      if(data.isBanned===true){
+
+        signOut(auth);
+
+        Swal.fire({
+          icon:"error",
+          title:"অ্যাকাউন্ট ব্যান করা হয়েছে!",
+          text:"আপনার অ্যাকাউন্টটি স্থগিত করা হয়েছে।",
+          allowOutsideClick:false
+        });
+
+        return;
+
+      }
+
+
+      document.getElementById("userName")
+        .innerText=
+          data.name ||
+          user.displayName ||
+          "ইউজার";
+
+
+      document.getElementById("userEmail")
+        .innerHTML=
+          `<i class="fa-solid fa-envelope"></i> ${
+            user.email ||
+            data.email ||
+            "ইমেইল পাওয়া যায়নি"
+          }`;
+
+
+      document.getElementById("userPhone")
+        .innerHTML=
+          `<i class="fa-solid fa-phone"></i> ${
+            data.phone ||
+            user.phoneNumber ||
+            "নাম্বার পাওয়া যায়নি"
+          }`;
+
+
+      document.getElementById("userBalance")
+        .innerText=
+          Number(data.balance||0)
+          .toLocaleString(
+            "bn-BD",
+            {
+              minimumFractionDigits:2
+            }
+          );
+
+
+      if(data.profilePic){
+
+        document.getElementById("userAvatar")
+          .src=data.profilePic;
+
+      }
+
+
+      /* Profile fields */
+
+      document.getElementById("nameInput")
+        .value=data.name||"";
+
+      document.getElementById("phoneInput")
+        .value=
+          data.phone ||
+          user.phoneNumber ||
+          "";
+
+      if(data.profilePic){
+
+        selectedAvatarUrl=data.profilePic;
+
+        document.getElementById("selectedAvatar")
+          .src=data.profilePic;
+
+        document
+          .querySelectorAll(".avatar-option")
+          .forEach(option=>{
+
+            option.classList.toggle(
+              "selected",
+              option.dataset.url===data.profilePic
+            );
+
+          });
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   TICKETS
+===================================================== */
+
+function loadTickets(user){
+
+  const q=query(
+    collection(db,"tickets"),
+    where("userId","==",user.uid)
+  );
+
+
+  onSnapshot(q,snapshot=>{
+
+    const pending=[];
+
+    snapshot.forEach(ticket=>{
+
+      const data=ticket.data();
+
+      if(
+        data.status==="pending" ||
+        data.status==="active" ||
+        !data.status
+      ){
+
+        pending.push(
+          data.ticketNumber ||
+          data.ticketId ||
+          ticket.id.substring(0,6)
+        );
+
+      }
+
+    });
+
+
+    const id=document.getElementById("ticketId");
+    const status=document.getElementById("ticketStatus");
+
+
+    if(pending.length){
+
+      id.innerText=
+        pending
+        .map(x=>`#${x}`)
+        .join(", ");
+
+      status.innerText="অপেক্ষমাণ";
+
+      status.className="status pending";
+
+    }else{
+
+      id.innerText="কোনো টিকিট নেই";
+
+      status.innerText="নাই";
+
+      status.className="status lost";
+
+    }
+
+  });
+
+}
+
+
+/* =====================================================
+   SLOTS
+===================================================== */
+
+function loadSlots(){
+
+  onSnapshot(
+    collection(db,"slots"),
+    snapshot=>{
+
+      let activeSlot=null;
+
+
+      snapshot.forEach(snap=>{
+
+        const data=snap.data();
+
+        if(
+          data.status==="countdown" ||
+          data.status==="active"
+        ){
+
+          activeSlot={
+            id:snap.id,
+            ...data
+          };
+
+        }
+
+      });
+
+
+      const title=
+        document.getElementById(
+          "activeSlotTitle"
+        );
+
+      const timer=
+        document.getElementById(
+          "drawTimer"
+        );
+
+      const ticketLabel=
+        document.getElementById(
+          "ticketLabel"
+        );
+
+
+      if(activeSlot){
+
+        const shortCode=
+          activeSlot.id
+          .substring(0,4)
+          .toUpperCase();
+
+
+        ticketLabel.innerHTML=
+          `স্লট ID:
+           <span style="color:var(--gold)">
+             #${shortCode}
+           </span>
+           এর টিকিট:`;
+
+
+        if(activeSlot.status==="active"){
+
+          title.innerText=
+            `স্লট #${shortCode} ড্র চলছে:`;
+
+          timer.innerText="LIVE NOW!";
+
+          timer.style.color="var(--green)";
+
+          if(countdownInterval){
+
+            clearInterval(
+              countdownInterval
+            );
+
+          }
+
+        }else if(activeSlot.drawTime){
+
+          title.innerText=
+            `স্লট #${shortCode} ড্র কাউন্টডাউন:`;
+
+          const target=
+            typeof activeSlot.drawTime==="number"
+            ?
+            activeSlot.drawTime
+            :
+            (
+              activeSlot.drawTime.toDate
+              ?
+              activeSlot.drawTime.toDate().getTime()
+              :
+              new Date(
+                activeSlot.drawTime
+              ).getTime()
+            );
+
+
+          startCountdown(target);
+
+        }
+
+      }else{
+
+        title.innerText=
+          "পরবর্তী ড্র শুরু:";
+
+        ticketLabel.innerText=
+          "পরবর্তী ড্র টিকিট:";
+
+        timer.innerText=
+          "নির্ধারিত হয়নি";
+
+        timer.style.color="#fff";
+
+        if(countdownInterval){
+
+          clearInterval(
+            countdownInterval
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   COUNTDOWN
+===================================================== */
+
+function startCountdown(target){
+
+  if(countdownInterval){
+
+    clearInterval(
+      countdownInterval
+    );
+
+  }
+
+
+  function update(){
+
+    const diff=
+      target-Date.now();
+
+    const timer=
+      document.getElementById(
+        "drawTimer"
+      );
+
+
+    if(diff<=0){
+
+      clearInterval(
+        countdownInterval
+      );
+
+      timer.innerText="LIVE NOW!";
+
+      timer.style.color="var(--green)";
+
+      return;
+
+    }
+
+
+    const hours=
+      Math.floor(
+        (diff%(1000*60*60*24))/
+        (1000*60*60)
+      );
+
+    const minutes=
+      Math.floor(
+        (diff%(1000*60*60))/
+        (1000*60)
+      );
+
+    const seconds=
+      Math.floor(
+        (diff%(1000*60))/
+        1000
+      );
+
+
+    const pad=n=>
+      n<10?"0"+n:n;
+
+
+    timer.innerText=
+      `${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+
+    timer.style.color="#fff";
+
+  }
+
+
+  update();
+
+  countdownInterval=
+    setInterval(update,1000);
+
+}
+
+
+/* =====================================================
+   POPUP
+===================================================== */
+
+function loadPopup(){
+
+  const qPopup=query(
+    collection(db,"popups"),
+    orderBy("createdAt","desc"),
+    limit(1)
+  );
+
+
+  onSnapshot(qPopup,snapshot=>{
+
+    if(snapshot.empty)return;
+
+
+    const popupDoc=
+      snapshot.docs[0];
+
+    const popup=
+      popupDoc.data();
+
+
+    const lastSeen=
+      localStorage.getItem(
+        "last_seen_popup"
+      );
+
+
+    if(lastSeen===popupDoc.id)return;
+
+
+    document.getElementById("popupTitle")
+      .innerText=
+        popup.title||"ঘোষণা";
+
+
+    document.getElementById("popupMessage")
+      .innerText=
+        popup.message||
+        popup.body||
+        "";
+
+
+    const img=
+      document.getElementById("popupImg");
+
+
+    if(popup.imageUrl||popup.image){
+
+      img.src=
+        popup.imageUrl||
+        popup.image;
+
+      img.style.display="block";
+
+    }else{
+
+      img.style.display="none";
+
+    }
+
+
+    document
+      .getElementById("popupOverlay")
+      .classList.add("active");
+
+
+    function closePopup(){
+
+      document
+        .getElementById("popupOverlay")
+        .classList.remove("active");
+
+      localStorage.setItem(
+        "last_seen_popup",
+        popupDoc.id
+      );
+
+    }
+
+
+    document
+      .getElementById("popupClose")
+      .onclick=closePopup;
+
+
+    document
+      .getElementById("popupButton")
+      .onclick=closePopup;
+
+  });
+
+}
+
+
+/* =====================================================
+   PROFILE NAVIGATION
+===================================================== */
+
+document.getElementById("openProfile")
+  .addEventListener(
+    "click",
+    ()=>{
+      showProfile(true);
+    }
+  );
+
+
+document.getElementById("profileButton")
+  .addEventListener(
+    "click",
+    ()=>{
+      showProfile(true);
+    }
+  );
+
+
+document.getElementById("profileBack")
+  .addEventListener(
+    "click",
+    ()=>{
+
+      /*
+        গুরুত্বপূর্ণ:
+        এখানে window.location বা href ব্যবহার করা হয়নি।
+        তাই পেজ বন্ধ/রিলোড হবে না।
+      */
+
+      showDashboard(true);
+
+    }
+  );
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+let selectedAvatarUrl=
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix";
+
+
+document
+  .querySelectorAll(".avatar-option")
+  .forEach(option=>{
+
+    option.addEventListener(
+      "click",
+      ()=>{
+
+        document
+          .querySelectorAll(".avatar-option")
+          .forEach(x=>
+            x.classList.remove("selected")
+          );
+
+
+        option.classList.add("selected");
+
+
+        selectedAvatarUrl=
+          option.dataset.url;
+
+
+        document
+          .getElementById("selectedAvatar")
+          .src=
+            selectedAvatarUrl;
+
+      }
+    );
+
+  });
+
+
+/* =====================================================
+   PROFILE UPDATE
+===================================================== */
+
+document
+  .getElementById("profileForm")
+  .addEventListener(
+    "submit",
+    async e=>{
+
+      e.preventDefault();
+
+
+      const user=auth.currentUser;
+
+      if(!user)return;
+
+
+      const name=
+        document
+          .getElementById("nameInput")
+          .value
+          .trim();
+
+
+      const phone=
+        document
+          .getElementById("phoneInput")
+          .value
+          .trim();
+
+
+      const oldPass=
+        document
+          .getElementById("oldPassword")
+          .value;
+
+
+      const newPass=
+        document
+          .getElementById("newPassword")
+          .value;
+
+
+      const confirmPass=
+        document
+          .getElementById("confirmPassword")
+          .value;
+
+
+      if(!name||!phone){
+
+        Swal.fire({
+          icon:"warning",
+          title:"তথ্য অসম্পূর্ণ!",
+          text:"নাম ও ফোন নম্বর পূরণ করুন।"
+        });
+
+        return;
+
+      }
+
+
+      Swal.fire({
+        title:"আপডেট হচ্ছে...",
+        allowOutsideClick:false,
+        didOpen:()=>Swal.showLoading()
+      });
+
+
+      try{
+
+        /* PASSWORD */
+
+        if(
+          oldPass ||
+          newPass ||
+          confirmPass
+        ){
+
+          if(
+            !oldPass ||
+            !newPass ||
+            !confirmPass
+          ){
+
+            throw new Error(
+              "পাসওয়ার্ড পরিবর্তনের জন্য পুরানো, নতুন এবং কনফার্ম পাসওয়ার্ড সবগুলো পূরণ করুন!"
+            );
+
+          }
+
+
+          if(newPass!==confirmPass){
+
+            throw new Error(
+              "নতুন পাসওয়ার্ড এবং কনফার্ম পাসওয়ার্ড মিলছে না!"
+            );
+
+          }
+
+
+          if(newPass.length<6){
+
+            throw new Error(
+              "নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!"
+            );
+
+          }
+
+
+          if(!user.email){
+
+            throw new Error(
+              "এই অ্যাকাউন্টে ইমেইল পাওয়া যায়নি।"
+            );
+
+          }
+
+
+          const credential=
+            EmailAuthProvider.credential(
+              user.email,
+              oldPass
+            );
+
+
+          await reauthenticateWithCredential(
+            user,
+            credential
+          );
+
+
+          await updatePassword(
+            user,
+            newPass
+          );
+
+        }
+
+
+        /* PROFILE */
+
+        await updateDoc(
+          doc(db,"users",user.uid),
+          {
+            name:name,
+            phone:phone,
+            profilePic:selectedAvatarUrl
+          }
+        );
+
+
+        await updateProfile(
+          user,
+          {
+            displayName:name
+          }
+        );
+
+
+        /* CLEAR PASSWORD */
+
+        document.getElementById("oldPassword")
+          .value="";
+
+        document.getElementById("newPassword")
+          .value="";
+
+        document.getElementById("confirmPassword")
+          .value="";
+
+
+        await Swal.fire({
+          icon:"success",
+          title:"সফল!",
+          text:"প্রোফাইল সফলভাবে আপডেট করা হয়েছে।",
+          confirmButtonColor:"#ffd700"
+        });
+
+
+        showDashboard(false);
+
+
+      }catch(error){
+
+        Swal.fire({
+          icon:"error",
+          title:"ত্রুটি!",
+          text:
+            error.message ||
+            "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।",
+          confirmButtonColor:"#ff4d4d"
+        });
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logoutUser(){
+
+  const result=
+    await Swal.fire({
+
+      title:"লগআউট করতে চান?",
+
+      text:"আপনাকে পুনরায় লগইন করতে হবে।",
+
+      icon:"warning",
+
+      showCancelButton:true,
+
+      confirmButtonColor:"#ff4d4d",
+
+      cancelButtonColor:"#64748b",
+
+      confirmButtonText:"হ্যাঁ, লগআউট",
+
+      cancelButtonText:"বাতিল"
+
+    });
+
+
+  if(!result.isConfirmed)return;
+
+
+  try{
+
+    await signOut(auth);
+
+    showPage(authPage);
+
+    history.replaceState(
+      {view:"login"},
+      "",
+      location.pathname
+    );
+
+  }catch(error){
+
+    Swal.fire(
+      "ত্রুটি!",
+      "লগআউট করতে সমস্যা হয়েছে।",
+      "error"
+    );
+
+  }
+
+}
+
+
+document
+  .getElementById("dashboardLogout")
+  .addEventListener(
+    "click",
+    logoutUser
+  );
+
+
+document
+  .getElementById("profileLogout")
+  .addEventListener(
+    "click",
+    logoutUser
+  );
+
+
+/* =====================================================
+   SIGNUP
+===================================================== */
+
+document
+  .getElementById("btnSignup")
+  .addEventListener(
+    "click",
+    async()=>{
+
+      const name=
+        document
+          .getElementById("signupName")
+          .value
+          .trim();
+
+
+      const phone=
+        document
+          .getElementById("signupPhone")
+          .value
+          .trim();
+
+
+      const email=
+        document
+          .getElementById("signupEmail")
+          .value
+          .trim();
+
+
+      const password=
+        document
+          .getElementById("signupPassword")
+          .value;
+
+
+      const referCode=
+        document
+          .getElementById("signupReferCode")
+          .value
+          .trim();
+
+
+      if(!name||!phone||!email||!password){
+
+        Swal.fire({
+          icon:"warning",
+          title:"অসম্পূর্ণ তথ্য!",
+          text:"দয়া করে প্রয়োজনীয় সব তথ্য পূরণ করুন।"
+        });
+
+        return;
+
+      }
+
+
+      if(password.length<6){
+
+        Swal.fire({
+          icon:"warning",
+          title:"দুর্বল পাসওয়ার্ড!",
+          text:"পাসওয়ার্ড নূন্যতম ৬ অক্ষরের হতে হবে।"
+        });
+
+        return;
+
+      }
+
+
+      Swal.fire({
+        title:"অ্যাকাউন্ট তৈরি হচ্ছে...",
+        allowOutsideClick:false,
+        didOpen:()=>Swal.showLoading()
+      });
+
+
+      try{
+
+        /* PHONE CHECK */
+
+        const phoneQuery=
+          query(
+            collection(db,"users"),
+            where("phone","==",phone)
+          );
+
+
+        const phoneSnapshot=
+          await getDocs(phoneQuery);
+
+
+        if(!phoneSnapshot.empty){
+
+          Swal.close();
+
+          Swal.fire({
+            icon:"error",
+            title:"নম্বরটি ইতিমধ্যে ব্যবহৃত!",
+            text:"এই মোবাইল নম্বরটি দিয়ে ইতিমধ্যে অ্যাকাউন্ট তৈরি করা হয়েছে।"
+          });
+
+          return;
+
+        }
+
+
+        let referredByUid=null;
+
+
+        /* REFERRAL */
+
+        if(referCode){
+
+          const refDocRef=
+            doc(
+              db,
+              "referral_codes",
+              referCode
+            );
+
+
+          const refDocSnap=
+            await getDoc(refDocRef);
+
+
+          if(refDocSnap.exists()){
+
+            referredByUid=
+              refDocSnap.data().uid;
+
+          }else{
+
+            const q=
+              query(
+                collection(db,"users"),
+                where(
+                  "phone",
+                  "==",
+                  referCode
+                )
+              );
+
+
+            const result=
+              await getDocs(q);
+
+
+            if(!result.empty){
+
+              result.forEach(d=>{
+
+                referredByUid=d.id;
+
+              });
+
+            }
+
+          }
+
+
+          if(!referredByUid){
+
+            Swal.close();
+
+            Swal.fire({
+              icon:"error",
+              title:"ভুল রেফার কোড!",
+              text:"রেফার কোড বা মোবাইল নম্বরটি ডাটাবেসে পাওয়া যায়নি।"
+            });
+
+            return;
+
+          }
+
+        }
+
+
+        /* CREATE AUTH */
+
+        const credential=
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+
+        const user=
+          credential.user;
+
+
+        await updateProfile(
+          user,
+          {
+            displayName:name
+          }
+        );
+
+
+        const referralCode=phone;
+
+
+        /* USER */
+
+        await setDoc(
+          doc(db,"users",user.uid),
+          {
+
+            uid:user.uid,
+
+            name:name,
+
+            phone:phone,
+
+            email:email,
+
+            balance:0,
+
+            referralCode:referralCode,
+
+            referredBy:
+              referredByUid||null,
+
+            hasDeposited:false,
+
+            referCommissionPaid:0,
+
+            createdAt:new Date()
+
+          }
+        );
+
+
+        /* REFERRAL CODE */
+
+        await setDoc(
+          doc(
+            db,
+            "referral_codes",
+            referralCode
+          ),
+          {
+            uid:user.uid
+          }
+        );
+
+
+        await signOut(auth);
+
+
+        Swal.fire({
+          icon:"success",
+          title:"রেজিস্ট্রেশন সফল হয়েছে! 🎉",
+          text:"এখন আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।",
+          timer:1800,
+          showConfirmButton:false
+        });
+
+
+        document.getElementById("signupName")
+          .value="";
+
+        document.getElementById("signupPhone")
+          .value="";
+
+        document.getElementById("signupEmail")
+          .value="";
+
+        document.getElementById("signupPassword")
+          .value="";
+
+        document.getElementById("signupReferCode")
+          .value="";
+
+
+        document.getElementById("loginEmail")
+          .value=email;
+
+
+        setTimeout(
+          ()=>{
+            switchForm("loginForm");
+          },
+          1800
+        );
+
+
+      }catch(error){
+
+        Swal.close();
+
+        let msg=
+          "সাইন আপ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+
+
+        if(
+          error.code===
+          "auth/email-already-in-use"
+        ){
+
+          msg=
+            "এই ইমেইল অ্যাড্রেসটি দিয়ে ইতিমধ্যে অ্যাকাউন্ট তৈরি রয়েছে!";
+
+        }else if(
+          error.code===
+          "auth/invalid-email"
+        ){
+
+          msg=
+            "ইমেইল অ্যাড্রেসটি সঠিক নয়।";
+
+        }else if(
+          error.code===
+          "auth/weak-password"
+        ){
+
+          msg=
+            "পাসওয়ার্ড আরও শক্তিশালী দিন।";
+
+        }
+
+
+        Swal.fire({
+          icon:"error",
+          title:"সাইন আপ ব্যর্থ!",
+          text:msg
+        });
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+document
+  .getElementById("btnLogin")
+  .addEventListener(
+    "click",
+    async()=>{
+
+      const email=
+        document
+          .getElementById("loginEmail")
+          .value
+          .trim();
+
+
+      const password=
+        document
+          .getElementById("loginPassword")
+          .value;
+
+
+      if(!email||!password){
+
+        Swal.fire({
+          icon:"warning",
+          title:"তথ্য দিন!",
+          text:"ইমেইল এবং পাসওয়ার্ড দুটিই পূরণ করুন।"
+        });
+
+        return;
+
+      }
+
+
+      Swal.fire({
+        title:"যাচাই করা হচ্ছে...",
+        allowOutsideClick:false,
+        didOpen:()=>Swal.showLoading()
+      });
+
+
+      try{
+
+        const credential=
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+
+        const user=
+          credential.user;
+
+
+        const userSnap=
+          await getDoc(
+            doc(db,"users",user.uid)
+          );
+
+
+        if(!userSnap.exists()){
+
+          await signOut(auth);
+
+          Swal.fire({
+            icon:"error",
+            title:"অ্যাকাউন্ট ডিলিট করা হয়েছে!",
+            text:"আপনার অ্যাকাউন্টটি প্রশাসক কর্তৃক মুছে ফেলা হয়েছে।"
+          });
+
+          return;
+
+        }
+
+
+        const data=
+          userSnap.data();
+
+
+        if(data.isBanned===true){
+
+          await signOut(auth);
+
+          Swal.fire({
+            icon:"error",
+            title:"অ্যাকাউন্ট ব্যান করা হয়েছে!",
+            text:"আপনার অ্যাকাউন্টটি স্থগিত বা ব্যান করা হয়েছে।"
+          });
+
+          return;
+
+        }
+
+
+        /* celebration */
+
+        const end=
+          Date.now()+2500;
+
+
+        (function frame(){
+
+          confetti({
+            particleCount:5,
+            angle:60,
+            spread:55,
+            origin:{x:0},
+            colors:[
+              "#ffd700",
+              "#ffa500",
+              "#ffffff",
+              "#00ff88"
+            ]
+          });
+
+
+          confetti({
+            particleCount:5,
+            angle:120,
+            spread:55,
+            origin:{x:1},
+            colors:[
+              "#ffd700",
+              "#ffa500",
+              "#ffffff",
+              "#00ff88"
+            ]
+          });
+
+
+          if(Date.now()<end){
+
+            requestAnimationFrame(frame);
+
+          }
+
+        })();
+
+
+        Swal.fire({
+          icon:"success",
+          title:"স্বাগতম! 🎉",
+          text:"লটারি পোর্টালে প্রবেশ করা হচ্ছে...",
+          timer:1200,
+          showConfirmButton:false
+        });
+
+
+        setTimeout(
+          ()=>{
+
+            history.replaceState(
+              {view:"dashboard"},
+              "",
+              "#dashboard"
+            );
+
+            showDashboard(false);
+
+          },
+          1200
+        );
+
+
+      }catch(error){
+
+        Swal.fire({
+          icon:"error",
+          title:"লগইন ব্যর্থ!",
+          text:"আপনার ইমেইল অথবা পাসওয়ার্ড ভুল দেওয়া হয়েছে।"
+        });
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   FORGOT PASSWORD
+===================================================== */
+
+document
+  .getElementById("btnForgot")
+  .addEventListener(
+    "click",
+    async()=>{
+
+      const email=
+        document
+          .getElementById("forgotEmail")
+          .value
+          .trim();
+
+
+      if(!email){
+
+        Swal.fire({
+          icon:"warning",
+          title:"ইমেইল দিন!",
+          text:"পাসওয়ার্ড রিসেট লিংক পেতে ইমেইল লিখুন।"
+        });
+
+        return;
+
+      }
+
+
+      Swal.fire({
+        title:"প্রসেস করা হচ্ছে...",
+        allowOutsideClick:false,
+        didOpen:()=>Swal.showLoading()
+      });
+
+
+      try{
+
+        await sendPasswordResetEmail(
+          auth,
+          email
+        );
+
+
+        await Swal.fire({
+          icon:"success",
+          title:"রিসেট লিংক পাঠানো হয়েছে!",
+          text:"আপনার ইমেইল চেক করুন।"
+        });
+
+
+        switchForm("loginForm");
+
+
+      }catch(error){
+
+        Swal.fire({
+          icon:"error",
+          title:"পাঠাতে ব্যর্থ!",
+          text:"এই ইমেইল দিয়ে কোনো রেজিস্টার্ড অ্যাকাউন্ট পাওয়া যায়নি।"
+        });
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   REFERRAL URL
+===================================================== */
+
+const params=
+  new URLSearchParams(
+    window.location.search
+  );
+
+
+const ref=
+  params.get("ref");
+
+
+if(ref){
+
+  document
+    .getElementById("signupReferCode")
+    .value=ref;
+
+  switchForm("signupForm");
+
+}
+
+
+/* =====================================================
+   INITIAL LOGIN HASH
+===================================================== */
+
+if(location.hash==="#profile" && !auth.currentUser){
+
+  history.replaceState(
+    {view:"login"},
+    "",
+    location.pathname
+  );
+
+}
+
+</script>
+
+</body>
+</html>

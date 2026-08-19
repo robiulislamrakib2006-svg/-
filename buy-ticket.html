@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>টিকিট কিনুন | DON</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --accent-gold: #fbbf24;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --glass-border: rgba(255,255,255,0.08);
+      --glass-shadow: 0 8px 32px rgba(0,0,0,0.37);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Hind Siliguri', sans-serif;
+    }
+
+    body {
+      background: var(--bg-dark);
+      background-image: radial-gradient(circle at top right,#1e293b,#0f172a);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 30px;
+    }
+
+    .glass-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* NAVBAR */
+    .navbar {
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(15,23,42,.92);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--glass-border);
+    }
+
+    .balance-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.1;
+    }
+
+    .balance-label {
+      font-size: 9px;
+      color: var(--text-sub);
+    }
+
+    .balance-value {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    #slotsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* SLOT CARD */
+    .slot-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 17px;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .slot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(255,255,255,.12);
+    }
+
+    .ticket-price {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--accent-gold);
+    }
+
+    .ticket-price small {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-sub);
+    }
+
+    .slot-id {
+      font-size: 11px;
+      color: var(--text-sub);
+      background: rgba(255,255,255,.05);
+      padding: 5px 8px;
+      border-radius: 7px;
+      white-space: nowrap;
+    }
+
+    .slot-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .slot-info i {
+      width: 18px;
+      text-align: center;
+      color: var(--accent-gold);
+    }
+
+    .progress-box {
+      background: rgba(0,0,0,.25);
+      padding: 9px 10px;
+      border-radius: 9px;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-bottom: 5px;
+    }
+
+    .progress-bg {
+      height: 8px;
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(135deg,#fbbf24,#d97706);
+      transition: width .3s;
+    }
+
+    .btn-buy {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 11px;
+      background: linear-gradient(135deg,#fbbf24,#d97706);
+      color: #000;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: .2s;
+    }
+
+    .btn-buy:active {
+      transform: scale(.98);
+    }
+
+    .btn-buy:disabled {
+      background: #334155;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .loading-box,
+    .empty-box {
+      text-align: center;
+      padding: 35px 15px;
+      color: var(--text-sub);
+    }
+
+    .loading-box i,
+    .empty-box i {
+      font-size: 35px;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,.2);
+    }
+
+    /* SWEET ALERT */
+    .swal2-popup {
+      background: #1e293b !important;
+      color: #fff !important;
+      border: 1px solid rgba(251,191,36,.35) !important;
+      border-radius: 16px !important;
+    }
+
+    .swal2-title {
+      color: var(--accent-gold) !important;
+    }
+
+    .swal2-confirm {
+      background: linear-gradient(135deg,#fbbf24,#d97706) !important;
+      color: #000 !important;
+      font-weight: 800 !important;
+      border-radius: 9px !important;
+    }
+
+    .swal2-cancel {
+      background: rgba(255,255,255,.08) !important;
+      color: #fff !important;
+      border-radius: 9px !important;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+
+  <a href="index.html" class="back-btn">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+
+  <div class="brand">
+    <i class="fa-solid fa-ticket"></i>
+    টিকিট কিনুন
+  </div>
+
+  <div class="balance-box">
+    <span class="balance-label">ব্যালেন্স</span>
+    <span class="balance-value">
+      ৳ <span id="currentBalance">0.00</span>
+    </span>
+  </div>
+
+</nav>
+
+<div class="main-container">
+
+  <div id="slotsContainer">
+
+    <div class="loading-box">
+      <i class="fa-solid fa-circle-notch fa-spin"></i>
+      <div>স্লট লোড হচ্ছে...</div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  collection,
+  onSnapshot,
+  runTransaction,
+  serverTimestamp,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+/* FIREBASE */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBuSbFLx4xcesLprgZhb9T5H3Pl5oxVq94",
+  authDomain: "kopa-samsu-95941.firebaseapp.com",
+  projectId: "kopa-samsu-95941",
+  storageBucket: "kopa-samsu-95941.firebasestorage.app",
+  messagingSenderId: "949740806870",
+  appId: "1:949740806870:web:52e745bba2436172481f77"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+/* VARIABLES */
+
+let currentUser = null;
+let userBalance = 0;
+let balanceUnsubscribe = null;
+let slotsUnsubscribe = null;
+
+
+/* AUTH */
+
+onAuthStateChanged(auth, (user) => {
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  currentUser = user;
+
+  listenUserBalance(user.uid);
+  loadActiveSlots();
+
+});
+
+
+/* USER BALANCE */
+
+function listenUserBalance(uid) {
+
+  if (balanceUnsubscribe) {
+    balanceUnsubscribe();
+  }
+
+  balanceUnsubscribe = onSnapshot(
+    doc(db, "users", uid),
+    (snap) => {
+
+      if (!snap.exists()) {
+        userBalance = 0;
+        updateBalance();
+        return;
+      }
+
+      const data = snap.data();
+
+      userBalance = Number(data.balance || 0);
+
+      updateBalance();
+
+    },
+    (error) => {
+
+      console.error("Balance error:", error);
+
+      userBalance = 0;
+
+      updateBalance();
+
+    }
+  );
+}
+
+
+function updateBalance() {
+
+  document.getElementById("currentBalance").innerText =
+    Number(userBalance).toLocaleString("bn-BD", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+}
+
+
+/* LOAD ACTIVE SLOTS */
+
+function loadActiveSlots() {
+
+  if (slotsUnsubscribe) {
+    slotsUnsubscribe();
+  }
+
+  const q = query(
+    collection(db, "slots"),
+    where("status", "==", "active")
+  );
+
+  slotsUnsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+
+      const container =
+        document.getElementById("slotsContainer");
+
+      if (snapshot.empty) {
+
+        container.innerHTML = `
+          <div class="empty-box">
+            <i class="fa-solid fa-ticket"></i>
+            <div>বর্তমানে কোনো লটারি স্লট চালু নেই।</div>
+          </div>
+        `;
+
+        return;
+      }
+
+
+      let slots = [];
+
+      snapshot.forEach((docSnap) => {
+
+        slots.push({
+          id: docSnap.id,
+          ...docSnap.data()
+        });
+
+      });
+
+
+      /* নতুন/সাম্প্রতিক স্লট আগে */
+
+      slots.sort((a,b) => {
+
+        const timeA =
+          a.createdAt?.toMillis
+            ? a.createdAt.toMillis()
+            : 0;
+
+        const timeB =
+          b.createdAt?.toMillis
+            ? b.createdAt.toMillis()
+            : 0;
+
+        return timeB - timeA;
+
+      });
+
+
+      let html = "";
+
+
+      slots.forEach((slot) => {
+
+        const slotId = slot.id;
+
+        const price = Number(slot.price || 0);
+
+        const joined =
+          Number(slot.joinedUsers || 0);
+
+        const max =
+          Number(slot.maxUsers || 100);
+
+        const fillPercent =
+          max > 0
+            ? Math.min((joined / max) * 100, 100)
+            : 0;
+
+        const isFull =
+          joined >= max;
+
+
+        const shortSlotCode =
+          slotId.substring(0, 4).toUpperCase();
+
+
+        let drawText = "";
+
+        if (slot.drawTime) {
+
+          let drawDate = null;
+
+          if (slot.drawTime.toDate) {
+            drawDate = slot.drawTime.toDate();
+          } else if (typeof slot.drawTime === "number") {
+            drawDate = new Date(slot.drawTime);
+          } else {
+            drawDate = new Date(slot.drawTime);
+          }
+
+          if (
+            drawDate &&
+            !isNaN(drawDate.getTime())
+          ) {
+
+            drawText =
+              drawDate.toLocaleString(
+                "bn-BD",
+                {
+                  day: "numeric",
+                  month: "short",
+                  hour: "2-digit",
+                  minute: "2-digit"
+                }
+              );
+
+          }
+
+        }
+
+
+        html += `
+
+          <div class="slot-card">
+
+            <div class="slot-header">
+
+              <div class="ticket-price">
+                ৳${price}
+                <small>/ টিকিট</small>
+              </div>
+
+              <div class="slot-id">
+                #${shortSlotCode}
+                (${joined}/${max})
+              </div>
+
+            </div>
+
+
+            <div class="slot-info">
+
+              <div>
+                <i class="fa-solid fa-trophy"></i>
+                বিজয়ীর সংখ্যা:
+                <strong>${slot.totalWinners || 0} জন</strong>
+              </div>
+
+              <div>
+                <i class="fa-solid fa-gift"></i>
+                পুরস্কার:
+                <strong>${slot.prizes || "নির্ধারিত নয়"}</strong>
+              </div>
+
+              ${
+                drawText
+                ? `
+                <div>
+                  <i class="fa-regular fa-clock"></i>
+                  ড্র:
+                  <strong>${drawText}</strong>
+                </div>
+                `
+                : ""
+              }
+
+            </div>
+
+
+            <div class="progress-box">
+
+              <div class="progress-text">
+
+                <span>বুকিং স্ট্যাটাস</span>
+
+                <span>
+                  ${fillPercent.toFixed(0)}% পূর্ণ
+                </span>
+
+              </div>
+
+              <div class="progress-bg">
+
+                <div
+                  class="progress-fill"
+                  style="width:${fillPercent}%"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <button
+              class="btn-buy"
+              ${isFull ? "disabled" : ""}
+              onclick="confirmBuyTicket('${slotId}', ${price})"
+            >
+
+              <i class="fa-solid fa-cart-shopping"></i>
+
+              ${
+                isFull
+                ? "স্লট ফুল হয়ে গেছে"
+                : "টিকিট কিনুন"
+              }
+
+            </button>
+
+          </div>
+
+        `;
+
+      });
+
+
+      container.innerHTML = html;
+
+    },
+    (error) => {
+
+      console.error("Slots error:", error);
+
+      document.getElementById(
+        "slotsContainer"
+      ).innerHTML = `
+
+        <div class="empty-box">
+
+          <i class="fa-solid fa-triangle-exclamation"></i>
+
+          <div>
+            স্লট লোড করতে সমস্যা হয়েছে।
+          </div>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+}
+
+
+/* CONFIRM PURCHASE */
+
+window.confirmBuyTicket = async (
+  slotId,
+  price
+) => {
+
+  if (!currentUser) return;
+
+
+  price = Number(price);
+
+
+  if (userBalance < price) {
+
+    const result = await Swal.fire({
+
+      title: "পর্যাপ্ত ব্যালেন্স নেই!",
+
+      html: `
+        টিকিটের মূল্য:
+        <strong>৳${price}</strong>
+        <br>
+        আপনার ব্যালেন্স:
+        <strong>৳${userBalance}</strong>
+        <br><br>
+        প্রথমে আপনার অ্যাকাউন্টে ডিপোজিট করুন।
+      `,
+
+      icon: "warning",
+
+      showCancelButton: true,
+
+      confirmButtonText:
+        '<i class="fa-solid fa-wallet"></i> ডিপোজিট করুন',
+
+      cancelButtonText: "পরে করব"
+
+    });
+
+
+    if (result.isConfirmed) {
+
+      window.location.href = "deposit.html";
+
+    }
+
+    return;
+
+  }
+
+
+  const result = await Swal.fire({
+
+    title: "টিকিট নিশ্চিত করুন",
+
+    html: `
+      আপনি কি
+      <strong>৳${price}</strong>
+      দিয়ে এই স্লটের
+      <strong>১টি টিকিট</strong>
+      কিনতে চান?
+    `,
+
+    icon: "question",
+
+    showCancelButton: true,
+
+    confirmButtonText: "হ্যাঁ, কিনুন",
+
+    cancelButtonText: "বাতিল"
+
+  });
+
+
+  if (result.isConfirmed) {
+
+    await buyTicketTransaction(
+      slotId,
+      price
+    );
+
+  }
+
+};
+
+
+/* PURCHASE TRANSACTION */
+
+async function buyTicketTransaction(
+  slotId,
+  price
+) {
+
+  Swal.fire({
+
+    title: "প্রসেসিং হচ্ছে...",
+
+    text: "দয়া করে অপেক্ষা করুন",
+
+    allowOutsideClick: false,
+
+    allowEscapeKey: false,
+
+    didOpen: () => {
+
+      Swal.showLoading();
+
+    }
+
+  });
+
+
+  const userRef =
+    doc(db, "users", currentUser.uid);
+
+  const slotRef =
+    doc(db, "slots", slotId);
+
+  const ticketRef =
+    doc(collection(db, "tickets"));
+
+  const trxRef =
+    doc(collection(db, "transactions"));
+
+
+  let randomTicketNum = "";
+
+
+  try {
+
+    const shortSlotCode =
+      slotId.substring(0, 4).toUpperCase();
+
+
+    randomTicketNum =
+      `KS-${shortSlotCode}-${Math.floor(
+        1000 + Math.random() * 9000
+      )}`;
+
+
+    await runTransaction(
+      db,
+      async (transaction) => {
+
+        const userDoc =
+          await transaction.get(userRef);
+
+        const slotDoc =
+          await transaction.get(slotRef);
+
+
+        if (!userDoc.exists()) {
+
+          throw "ইউজার পাওয়া যায়নি!";
+
+        }
+
+
+        if (!slotDoc.exists()) {
+
+          throw "লটারি স্লটটি আর পাওয়া যাচ্ছে না!";
+
+        }
+
+
+        const userData =
+          userDoc.data();
+
+        const slotData =
+          slotDoc.data();
+
+
+        const currentBalance =
+          Number(userData.balance || 0);
+
+        const joinedUsers =
+          Number(slotData.joinedUsers || 0);
+
+        const maxUsers =
+          Number(slotData.maxUsers || 100);
+
+
+        /* SLOT STATUS */
+
+        if (slotData.status !== "active") {
+
+          throw "এই স্লটে বর্তমানে টিকিট কেনা বন্ধ আছে!";
+
+        }
+
+
+        /* BALANCE */
+
+        if (currentBalance < price) {
+
+          throw "আপনার পর্যাপ্ত ব্যালেন্স নেই!";
+
+        }
+
+
+        /* SLOT FULL */
+
+        if (joinedUsers >= maxUsers) {
+
+          throw "দুঃখিত, এই স্লটের সকল টিকিট বিক্রি হয়ে গেছে!";
+
+        }
+
+
+        /* DRAW TIME */
+
+        if (slotData.drawTime) {
+
+          let drawTimeMs;
+
+
+          if (
+            typeof slotData.drawTime === "number"
+          ) {
+
+            drawTimeMs =
+              slotData.drawTime;
+
+          }
+
+          else if (
+            slotData.drawTime.toDate
+          ) {
+
+            drawTimeMs =
+              slotData.drawTime
+                .toDate()
+                .getTime();
+
+          }
+
+          else {
+
+            drawTimeMs =
+              new Date(
+                slotData.drawTime
+              ).getTime();
+
+          }
+
+
+          if (
+            Number.isFinite(drawTimeMs) &&
+            Date.now() >= drawTimeMs
+          ) {
+
+            throw "এই স্লটের ড্র শুরু হয়ে গেছে। এখন আর টিকিট কেনা যাবে না!";
+
+          }
+
+        }
+
+
+        /* UPDATE USER */
+
+        transaction.update(
+          userRef,
+          {
+
+            balance:
+              currentBalance - price,
+
+            todayTickets:
+              Number(userData.todayTickets || 0) + 1
+
+          }
+        );
+
+
+        /* UPDATE SLOT */
+
+        transaction.update(
+          slotRef,
+          {
+
+            joinedUsers:
+              joinedUsers + 1
+
+          }
+        );
+
+
+        /* CREATE TICKET */
+
+        transaction.set(
+          ticketRef,
+          {
+
+            ticketId:
+              randomTicketNum,
+
+            slotId:
+              slotId,
+
+            userId:
+              currentUser.uid,
+
+            userName:
+              currentUser.displayName || "ইউজার",
+
+            userEmail:
+              currentUser.email || "",
+
+            price:
+              price,
+
+            status:
+              "active",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        /* CREATE TRANSACTION */
+
+        transaction.set(
+          trxRef,
+          {
+
+            userId:
+              currentUser.uid,
+
+            type:
+              "ticket",
+
+            amount:
+              price,
+
+            ticketCode:
+              randomTicketNum,
+
+            slotId:
+              slotId,
+
+            status:
+              "approved",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+      }
+    );
+
+
+    /* SUCCESS */
+
+    const result =
+      await Swal.fire({
+
+        title: "সফল! 🎉",
+
+        html: `
+          আপনার টিকিট সফলভাবে কেনা হয়েছে।
+
+          <div style="
+            margin-top:12px;
+            padding:10px;
+            background:rgba(251,191,36,.1);
+            border:1px dashed #fbbf24;
+            border-radius:10px;
+            color:#fbbf24;
+            font-size:18px;
+            font-weight:800;
+          ">
+            ${randomTicketNum}
+          </div>
+        `,
+
+        icon: "success",
+
+        showCancelButton: true,
+
+        confirmButtonText:
+          '<i class="fa-solid fa-ticket"></i> আমার টিকিট',
+
+        cancelButtonText:
+          "ঠিক আছে"
+
+      });
+
+
+    if (result.isConfirmed) {
+
+      window.location.href =
+        "my-tickets.html";
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Ticket purchase failed:",
+      error
+    );
+
+
+    Swal.fire({
+
+      title: "এরর",
+
+      text:
+        typeof error === "string"
+          ? error
+          : "টিকিট কিনতে সমস্যা হয়েছে। আবার চেষ্টা করুন।",
+
+      icon: "error"
+
+    });
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
